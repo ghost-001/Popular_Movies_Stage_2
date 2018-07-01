@@ -42,8 +42,6 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresV
     @Override
     public void onBindViewHolder(@NonNull GenresAdapter.AllGenresViewHolder holder, int position) {
         final Genre genre = mGenres.get(position);
-        Log.d("THIS", "SZE : " + mGenres.size());
-        Log.d("THIS BIND",genre.getName());
         holder.mGenre_tv.setText(genre.getName());
 
     }

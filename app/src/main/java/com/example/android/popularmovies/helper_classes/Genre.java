@@ -13,6 +13,11 @@ public class Genre {
     @Expose
     private String name;
 
+
+    public  void setGenre(Integer id, String name){
+        this.id = id;
+        this.name = name;
+    }
     public Integer getId() {
         return id;
     }

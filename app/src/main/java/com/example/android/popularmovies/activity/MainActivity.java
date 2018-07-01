@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,10 +23,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.OnPosterListner;
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapters.MoviesAdapter;
 import com.example.android.popularmovies.api_manage.Movie_api;
-import com.example.android.popularmovies.api_manage.Retrofit_interface;
-import com.example.android.popularmovies.detail_activity.DetailActivity;
+import com.example.android.popularmovies.api_manage.RetrofitInterface;
 import com.example.android.popularmovies.helper_classes.Movie;
 import com.example.android.popularmovies.helper_classes.MovieResponse_first;
 
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
     private MoviesAdapter mMoviesAdapter;
     private int mpage = 1;
 
-    private Retrofit_interface retrofit_interface;
+    private RetrofitInterface retrofit_interface;
     private List<Movie> movies = null;
 
     private Boolean isLoading = true;
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
         mRecyclerView = findViewById(R.id.main_recyclerview);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        retrofit_interface = Movie_api.getClient().create(Retrofit_interface.class);
+        retrofit_interface = Movie_api.getClient().create(RetrofitInterface.class);
 
 
         load_Movies();
@@ -226,6 +227,11 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        if(item.getItemId() == R.id.main_menu_bookmarks){
+            Intent intent = new Intent(this,BookmarksActivity.class);
+            startActivity(intent);
+            return true;
+        }else
         if(checkInternet()) {
             movies = null;
             mpage = 1;
