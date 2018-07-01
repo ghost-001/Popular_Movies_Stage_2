@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Movies Hub</string>
+    <string name="API_KEY">PUT YOUR API KEY HERE</string>
+
+    <string name="CATEGORY_SELECTED">category</string>
+    <string name="dialog_message">Please check your internet connection</string>
+    <string name="dialog_title">No Internet</string>
+    <string name="ok">okay</string>
+    <string name="image">Image</string>
+    <string name="rating">Rating :</string>
+    <string name="run_time">Run time:</string>
+    <string name="min">min</string>
+    <string name="release_date">Release Date:</string>
+    <string name="genres">Genres :</string>
+    <string name="poster">Poster</string>
+    <string name="poster_transition">Poster_Transition</string>
+    <string name="please_check_your_internet">Please Check your Internet</string>
+    <string name="retry">Retry</string>
+    <string name="synopsis">Synopsis</string>
+    <string name="rating_star">Rating Star</string>
+
+</resources>
