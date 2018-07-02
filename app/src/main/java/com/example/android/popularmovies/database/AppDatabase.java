@@ -10,7 +10,7 @@ import android.util.Log;
 import com.example.android.popularmovies.helper_classes.MovieDetails;
 
 @Database(entities = {MovieDetails.class}, version = 1, exportSchema = false)
-@TypeConverters({GenreConverter.class,ImageConverter.class})
+@TypeConverters({GenreConverter.class, ImageConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static final String LOG_TAG = "ROOM";
     private static final Object LOCK = new Object();

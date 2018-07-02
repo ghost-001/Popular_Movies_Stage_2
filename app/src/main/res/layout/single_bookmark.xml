@@ -10,12 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:textSize="20sp"
-        android:text="Movie name"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
         android:background="@drawable/round_main_tv"
-        />
+        android:text="Movie name"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 
 </RelativeLayout>

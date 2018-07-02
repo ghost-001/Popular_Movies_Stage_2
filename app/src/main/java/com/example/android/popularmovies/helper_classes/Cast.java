@@ -1,4 +1,5 @@
 package com.example.android.popularmovies.helper_classes;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Cast {

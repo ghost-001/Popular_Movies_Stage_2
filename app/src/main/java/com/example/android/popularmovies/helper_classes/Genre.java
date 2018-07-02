@@ -1,4 +1,3 @@
-
 package com.example.android.popularmovies.helper_classes;
 
 import com.google.gson.annotations.Expose;
@@ -14,10 +13,11 @@ public class Genre {
     private String name;
 
 
-    public  void setGenre(Integer id, String name){
+    public void setGenre(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
+
     public Integer getId() {
         return id;
     }

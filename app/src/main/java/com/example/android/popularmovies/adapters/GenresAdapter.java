@@ -2,7 +2,6 @@ package com.example.android.popularmovies.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,26 +15,14 @@ import java.util.List;
 public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresViewHolder> {
     private List<Genre> mGenres;
 
-    public class AllGenresViewHolder extends RecyclerView.ViewHolder {
-        TextView mGenre_tv;
-        public AllGenresViewHolder(View itemView) {
-            super(itemView);
-            mGenre_tv = itemView.findViewById(R.id.genre_1);
-        }
-
-        public void setGenre(String genre_name){
-            mGenre_tv.setText(genre_name);
-        }
-    }
-
-    public  GenresAdapter(List<Genre> mGenre){
+    public GenresAdapter(List<Genre> mGenre) {
         this.mGenres = mGenre;
     }
 
     @NonNull
     @Override
     public GenresAdapter.AllGenresViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.genre_single,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.genre_single, parent, false);
         return new AllGenresViewHolder(view);
     }
 
@@ -49,6 +36,19 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresV
     @Override
     public int getItemCount() {
         return mGenres.size();
+    }
+
+    public class AllGenresViewHolder extends RecyclerView.ViewHolder {
+        TextView mGenre_tv;
+
+        public AllGenresViewHolder(View itemView) {
+            super(itemView);
+            mGenre_tv = itemView.findViewById(R.id.genre_1);
+        }
+
+        public void setGenre(String genre_name) {
+            mGenre_tv.setText(genre_name);
+        }
     }
 
 

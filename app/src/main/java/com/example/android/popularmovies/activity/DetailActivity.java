@@ -32,7 +32,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.OnYoutubeClickListener;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapters.GenresAdapter;
 import com.example.android.popularmovies.adapters.ReviewsAdapter;
@@ -47,6 +46,8 @@ import com.example.android.popularmovies.helper_classes.ReviewResults;
 import com.example.android.popularmovies.helper_classes.Reviews;
 import com.example.android.popularmovies.helper_classes.VideoResults;
 import com.example.android.popularmovies.helper_classes.Videos;
+import com.example.android.popularmovies.utility.AppExecutors;
+import com.example.android.popularmovies.utility.OnYoutubeClickListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -64,6 +65,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity implements OnYoutubeClickListener {
+    private final String getVideos = "videos,reviews,credits";
     private String API_KEY;
     private String TAG = "DetailActivity";
     private Integer color = Color.parseColor("#000000");
@@ -83,19 +85,16 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
     private ProgressBar mProgressBar;
     private RelativeLayout mLayout_rating, mLayout_runtime, mLayout_release, mLayout_card, mLayout_trailer;
     private RelativeLayout mLayout_reviews;
-    private  ImageView mReview_image;
-
+    private ImageView mReview_image;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private NestedScrollView mNested;
     private AppBarLayout mAppBarLayout;
     private RecyclerView mGenreRecyclerView, mReviewRecylerView;
     private FloatingActionButton mActionButton;
-
     private AppDatabase mAppDatabase;
     private RetrofitInterface retrofitInterface;
     private MovieDetails mMovieDetails;
-    private final String getVideos = "videos,reviews,credits";
     private Boolean REVIEWS_SHOW = true;
 
     @Override
@@ -282,7 +281,23 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
         Picasso.get().load(BASE_IMAGE_URL + mMovieDetails.getPosterPath())
                 .placeholder(R.drawable.photo)
-                .into(mPoster_image);
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        mPoster_image.setImageBitmap(bitmap);
+                        mMovieDetails.setImage_poster(bitmap);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
         mMovie_name.setText(mMovieDetails.getTitle());
         mMovie_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -338,7 +353,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                         tv.setVisibility(View.VISIBLE);
                         REVIEWS_SHOW = false;
                     }
-                }else if(!REVIEWS_SHOW){
+                } else if (!REVIEWS_SHOW) {
                     mReview_image.setImageDrawable(getResources().getDrawable(R.drawable.arrow_up, getTheme()));
                     if (!reviewResults.isEmpty()) {
                         mReviewRecylerView.setVisibility(View.GONE);
@@ -373,14 +388,19 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         });
     }
 
-    public void saveLocalData(){
+    public void saveLocalData() {
 
-    mAppDatabase.FavMoviesDao().insertMovies(mMovieDetails);
 
-   List<MovieDetails> cc =  mAppDatabase.FavMoviesDao().loadAllMovies();
-        Toast.makeText(this,"ADDED"+ mAppDatabase.FavMoviesDao().loadAllMovies(),Toast.LENGTH_SHORT).show();
-        Toast.makeText(this,"ADDED"+ cc.size(),Toast.LENGTH_SHORT).show();
-        Toast.makeText(this,"ADDED",Toast.LENGTH_SHORT).show();
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mAppDatabase.FavMoviesDao().insertMovies(mMovieDetails);
+            }
+        });
+        List<MovieDetails> cc = mAppDatabase.FavMoviesDao().loadAllMovies();
+        Toast.makeText(this, "ADDED" + mAppDatabase.FavMoviesDao().loadAllMovies(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "ADDED" + cc.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "ADDED", Toast.LENGTH_SHORT).show();
     }
 
     public List<String> getYoutubeKeys(List<VideoResults> results) {

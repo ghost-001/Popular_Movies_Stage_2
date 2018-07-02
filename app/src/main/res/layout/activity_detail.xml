@@ -260,6 +260,7 @@
                         android:textColor="@android:color/white" />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
+
             <View
                 android:id="@+id/veiw_1"
                 android:layout_width="match_parent"
@@ -267,50 +268,52 @@
                 android:layout_below="@id/detail_synopsis_cardview"
                 android:layout_marginTop="15dp"
                 android:background="@android:color/white" />
+
             <RelativeLayout
                 android:id="@+id/detail_trailer_relative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/veiw_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:background="@drawable/rectangle_detail_trailer">
-            <TextView
-                android:id="@+id/detail_trailer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="4dp"
-                android:paddingStart="8dp"
-                android:text="Trailer"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"
-                android:textStyle="italic" />
-            <android.support.v7.widget.CardView
-                android:id="@+id/detail_youtube_cardview"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_below="@id/detail_trailer"
-                android:layout_marginTop="10dp"
-                android:elevation="12dp"
-                app:cardCornerRadius="0dp"
-                android:background="#FF0000"
-              >
 
-                <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
-                    android:id="@+id/detail_youTubePlay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
-
-                <me.relex.circleindicator.CircleIndicator
-                    android:id="@+id/indicator"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/detail_trailer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="bottom"
-                    android:padding="10dp"
+                    android:paddingEnd="4dp"
+                    android:paddingStart="8dp"
+                    android:text="Trailer"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:textStyle="italic" />
 
-                    />
-            </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:id="@+id/detail_youtube_cardview"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_below="@id/detail_trailer"
+                    android:layout_marginTop="10dp"
+                    android:background="#FF0000"
+                    android:elevation="12dp"
+                    app:cardCornerRadius="0dp">
+
+                    <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
+                        android:id="@+id/detail_youTubePlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <me.relex.circleindicator.CircleIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="bottom"
+                        android:padding="10dp"
+
+                        />
+                </android.support.v7.widget.CardView>
+
                 <View
                     android:id="@+id/veiw_2"
                     android:layout_width="match_parent"
@@ -321,6 +324,7 @@
 
 
             </RelativeLayout>
+
             <android.support.v7.widget.CardView
                 android:id="@+id/detail_reviews_cardview"
                 android:layout_width="match_parent"
@@ -336,9 +340,9 @@
                     android:id="@+id/detail_reviews_relative"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/round_detail_ratings"
                     android:padding="4dp"
-                    android:paddingBottom="8dp"
-                    android:background="@drawable/round_detail_ratings">
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:id="@+id/detail_reviews"
@@ -351,15 +355,16 @@
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         android:textStyle="italic" />
+
                     <ImageView
                         android:id="@+id/detail_review_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/arrow_up"
-                        android:paddingTop="15dp"
+                        android:layout_toRightOf="@id/detail_reviews"
                         android:paddingEnd="4dp"
                         android:paddingStart="8dp"
-                        android:layout_toRightOf="@id/detail_reviews"/>
+                        android:paddingTop="15dp"
+                        android:src="@drawable/arrow_up" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/detail_reviews_recycler"
@@ -369,22 +374,22 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="6dp"
                         android:padding="6dp"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/detail_no_reviews"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/detail_reviews"
+                        android:paddingBottom="10dp"
                         android:paddingEnd="4dp"
                         android:paddingStart="8dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:text="No reviews yet"
-                        android:layout_below="@+id/detail_reviews"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textStyle="italic"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone" />
                 </RelativeLayout>
 
             </android.support.v7.widget.CardView>

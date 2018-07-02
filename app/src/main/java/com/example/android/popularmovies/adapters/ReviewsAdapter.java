@@ -10,42 +10,27 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.helper_classes.ReviewResults;
-import com.example.android.popularmovies.helper_classes.Reviews;
 
 import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.AllReviewsViewHolder> {
     private List<ReviewResults> mReviews;
 
-    public class AllReviewsViewHolder extends RecyclerView.ViewHolder {
-        TextView mAuthor_tv;
-        TextView mExpandable_tv;
-        public AllReviewsViewHolder(View itemView) {
-            super(itemView);
-            mAuthor_tv = itemView.findViewById(R.id.author_name);
-            mExpandable_tv = itemView.findViewById(R.id.content_text);
-        }
-
-        public void setAuthor(String genre_name){
-            mAuthor_tv.setText(genre_name);
-        }
-    }
-
-    public  ReviewsAdapter(List<ReviewResults> reviews){
+    public ReviewsAdapter(List<ReviewResults> reviews) {
         this.mReviews = reviews;
     }
 
     @NonNull
     @Override
     public ReviewsAdapter.AllReviewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reviews_expandable,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reviews_expandable, parent, false);
         return new AllReviewsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReviewsAdapter.AllReviewsViewHolder holder, int position) {
         final ReviewResults reviews = mReviews.get(position);
-        Log.d("AUTHOR",reviews.getAuthor());
+        Log.d("AUTHOR", reviews.getAuthor());
         holder.mAuthor_tv.setText(reviews.getAuthor());
         holder.mExpandable_tv.setText(reviews.getContent());
 
@@ -56,6 +41,20 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.AllRevie
         return mReviews.size();
     }
 
+    public class AllReviewsViewHolder extends RecyclerView.ViewHolder {
+        TextView mAuthor_tv;
+        TextView mExpandable_tv;
+
+        public AllReviewsViewHolder(View itemView) {
+            super(itemView);
+            mAuthor_tv = itemView.findViewById(R.id.author_name);
+            mExpandable_tv = itemView.findViewById(R.id.content_text);
+        }
+
+        public void setAuthor(String genre_name) {
+            mAuthor_tv.setText(genre_name);
+        }
+    }
 
 
 }

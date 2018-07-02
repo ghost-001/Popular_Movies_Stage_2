@@ -1,21 +1,15 @@
-
 package com.example.android.popularmovies.helper_classes;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.example.android.popularmovies.database.GenreConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,23 +18,153 @@ import java.util.List;
 public class MovieDetails {
 
 
-
     @PrimaryKey(autoGenerate = true)
     private Integer movie_id;
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    private Bitmap image_poster;
+    @ColumnInfo(name = "title")
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @ColumnInfo(name = "overview")
+    @SerializedName("overview")
+    @Expose
+    private String overview;
+    @ColumnInfo(name = "runtime")
+    @SerializedName("runtime")
+    @Expose
+    private Integer runtime;
+    @ColumnInfo(name = "genre")
+    @TypeConverters(GenreConverter.class)
+    @SerializedName("genres")
+    @Expose
+    private List<Genre> genres = new ArrayList<>();
+    @Ignore
+    @SerializedName("poster_path")
+    @Expose
+    private String posterPath;
+    @ColumnInfo(name = "release_date")
+    @SerializedName("release_date")
+    @Expose
+    private String releaseDate;
+    @ColumnInfo(name = "vote_average")
+    @SerializedName("vote_average")
+    @Expose
+    private Double voteAverage;
+    @Ignore
+    @SerializedName("original_title")
+    @Expose
+    private String originalTitle;
+    @Ignore
+    @SerializedName("adult")
+    @Expose
+    private Boolean adult;
+    @Ignore
+    @SerializedName("backdrop_path")
+    @Expose
+    private String backdropPath;
+    @Ignore
+    @SerializedName("belongs_to_collection")
+    @Expose
+    private Object belongsToCollection;
+    @Ignore
+    @SerializedName("budget")
+    @Expose
+    private Integer budget;
+    @Ignore
+    @SerializedName("homepage")
+    @Expose
+    private String homepage;
+    @Ignore
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @Ignore
+    @SerializedName("imdb_id")
+    @Expose
+    private String imdbId;
+    @Ignore
+    @SerializedName("original_language")
+    @Expose
+    private String originalLanguage;
+    @Ignore
+    @SerializedName("popularity")
+    @Expose
+    private Double popularity;
+    @Ignore
+    @SerializedName("revenue")
+    @Expose
+    private Integer revenue;
+    @Ignore
+    @SerializedName("status")
+    @Expose
+    private String status;
+    @Ignore
+    @SerializedName("tagline")
+    @Expose
+    private String tagline;
+    @Ignore
+    @SerializedName("video")
+    @Expose
+    private Boolean video;
+    @Ignore
+    @SerializedName("vote_count")
+    @Expose
+    private Integer voteCount;
+    @Ignore
+    @SerializedName("videos")
+    @Expose
+    private Videos videos;
+    @Ignore
+    @SerializedName("reviews")
+    @Expose
+    private Reviews reviews;
+    @Ignore
+    @SerializedName("credits")
+    @Expose
+    private Credits credits;
 
 
-    public void setMovie_id(Integer movie_id) {
+    @Ignore
+    public MovieDetails(String title, Integer runtime,
+                        String releaseDate, List<Genre> genres,
+                        Double voteAverage, String overview) {
+        this.title = title;
+        this.runtime = runtime;
+        this.releaseDate = releaseDate;
+        this.genres = genres;
+        this.voteAverage = voteAverage;
+        this.overview = overview;
+    }
+
+    public MovieDetails(int movie_id, String title, Integer runtime,
+                        String releaseDate, List<Genre> genres, Bitmap image_poster,
+                        Double voteAverage, String overview) {
+        String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
         this.movie_id = movie_id;
+        this.title = title;
+        this.runtime = runtime;
+        this.releaseDate = releaseDate;
+        this.genres = genres;
+        this.image_poster = image_poster;
+        this.voteAverage = voteAverage;
+        this.overview = overview;
+
+
     }
 
     public Integer getMovie_id() {
         return movie_id;
     }
 
+    public void setMovie_id(Integer movie_id) {
+        this.movie_id = movie_id;
+    }
+
     public Bitmap getImage_poster() {
         String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
 
-        Picasso.get().load(BASE_IMAGE_URL + posterPath)
+        /*Picasso.get().load(BASE_IMAGE_URL + posterPath)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -57,172 +181,16 @@ public class MovieDetails {
                     public void onPrepareLoad(Drawable placeHolderDrawable) {
 
                     }
-                });
+                });*/
 
         return image_poster;
     }
 
     public void setImage_poster(Bitmap image_poster) {
 
+
         this.image_poster = image_poster;
     }
-
-    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
-
-    private Bitmap image_poster;
-
-    @ColumnInfo(name = "title")
-    @SerializedName("title")
-    @Expose
-    private String title;
-    @ColumnInfo(name = "overview")
-    @SerializedName("overview")
-    @Expose
-    private String overview;
-    @ColumnInfo(name = "runtime")
-    @SerializedName("runtime")
-    @Expose
-    private Integer runtime;
-
-    @ColumnInfo(name = "genre")
-    @TypeConverters(GenreConverter.class)
-    @SerializedName("genres")
-    @Expose
-    private List<Genre> genres = new ArrayList<>();
-
-    @Ignore
-    @SerializedName("poster_path")
-    @Expose
-    private String posterPath;
-
-    @ColumnInfo(name = "release_date")
-    @SerializedName("release_date")
-    @Expose
-    private String releaseDate;
-
-    @ColumnInfo(name = "vote_average")
-    @SerializedName("vote_average")
-    @Expose
-    private Double voteAverage;
-
-    @Ignore
-    @SerializedName("original_title")
-    @Expose
-    private String originalTitle;
-
-    @Ignore
-    @SerializedName("adult")
-    @Expose
-    private Boolean adult;
-
-    @Ignore
-    @SerializedName("backdrop_path")
-    @Expose
-    private String backdropPath;
-
-    @Ignore
-    @SerializedName("belongs_to_collection")
-    @Expose
-    private Object belongsToCollection;
-
-    @Ignore
-    @SerializedName("budget")
-    @Expose
-    private Integer budget;
-
-    @Ignore
-    @SerializedName("homepage")
-    @Expose
-    private String homepage;
-
-    @Ignore
-    @SerializedName("id")
-    @Expose
-    private Integer id;
-
-    @Ignore
-    @SerializedName("imdb_id")
-    @Expose
-    private String imdbId;
-
-    @Ignore
-    @SerializedName("original_language")
-    @Expose
-    private String originalLanguage;
-
-    @Ignore
-    @SerializedName("popularity")
-    @Expose
-    private Double popularity;
-
-    @Ignore
-    @SerializedName("revenue")
-    @Expose
-    private Integer revenue;
-
-    @Ignore
-    @SerializedName("status")
-    @Expose
-    private String status;
-
-    @Ignore
-    @SerializedName("tagline")
-    @Expose
-    private String tagline;
-
-    @Ignore
-    @SerializedName("video")
-    @Expose
-    private Boolean video;
-
-
-
-
-    @Ignore
-    @SerializedName("vote_count")
-    @Expose
-    private Integer voteCount;
-
-    @Ignore
-    @SerializedName("videos")
-    @Expose
-    private Videos videos;
-
-    @Ignore
-    @SerializedName("reviews")
-    @Expose
-    private Reviews reviews;
-
-    @Ignore
-    @SerializedName("credits")
-    @Expose
-    private Credits credits;
-
-    @Ignore
-    public MovieDetails(String title, Integer runtime,
-                        String releaseDate, List<Genre>genres,
-                        Double voteAverage, String overview){
-        this.title = title;
-        this.runtime = runtime;
-        this.releaseDate = releaseDate;
-        this.genres = genres;
-        this.voteAverage = voteAverage;
-        this.overview = overview;
-    }
-
-    public MovieDetails(int movie_id, String title, Integer runtime,
-                        String releaseDate, List<Genre>genres,
-                        Double voteAverage,String overview){
-       this.movie_id = movie_id;
-        this.title = title;
-        this.runtime = runtime;
-        this.releaseDate = releaseDate;
-        this.genres = genres;
-        this.voteAverage = voteAverage;
-        this.overview = overview;
-
-    }
-
 
     public Boolean getAdult() {
         return adult;

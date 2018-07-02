@@ -9,51 +9,27 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.popularmovies.OnPosterListner;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.helper_classes.Movie;
+import com.example.android.popularmovies.utility.OnPosterListner;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieViewHolder> {
 
+    private final OnPosterListner mOnPosterListner;
     private List<Movie> mMovieList;
     private Context mContext;
-    private final OnPosterListner mOnPosterListner;
     private String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
     private String BASE_BACKDROP_URL = "https://image.tmdb.org/t/p/w300";
 
-
-    public static class AllMovieViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView movie_poster;
-        TextView movie_name;
-        Context cc;
-
-
-        public AllMovieViewHolder(View itemView, Context context) {
-            super(itemView);
-            cc = context;
-            movie_poster = (ImageView) itemView.findViewById(R.id.movie_poster);
-            movie_name = (TextView) itemView.findViewById(R.id.movie_name);
-
-        }
-
-        public void setImage(String url) {
-
-            Picasso.get().load(url)
-                    .placeholder(R.drawable.photo).into(movie_poster);
-
-        }
-    }
 
     public MoviesAdapter(List<Movie> movies, Context context) {
         mContext = context;
         mMovieList = movies;
         mOnPosterListner = (OnPosterListner) context;
     }
-
 
     @NonNull
     @Override
@@ -89,6 +65,29 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
             mMovieList.add(m);
         }
         notifyDataSetChanged();
+    }
+
+    public static class AllMovieViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView movie_poster;
+        TextView movie_name;
+        Context cc;
+
+
+        public AllMovieViewHolder(View itemView, Context context) {
+            super(itemView);
+            cc = context;
+            movie_poster = (ImageView) itemView.findViewById(R.id.movie_poster);
+            movie_name = (TextView) itemView.findViewById(R.id.movie_name);
+
+        }
+
+        public void setImage(String url) {
+
+            Picasso.get().load(url)
+                    .placeholder(R.drawable.photo).into(movie_poster);
+
+        }
     }
 
 }

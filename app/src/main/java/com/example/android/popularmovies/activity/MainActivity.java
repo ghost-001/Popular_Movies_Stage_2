@@ -23,13 +23,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.OnPosterListner;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapters.MoviesAdapter;
 import com.example.android.popularmovies.api_manage.Movie_api;
 import com.example.android.popularmovies.api_manage.RetrofitInterface;
 import com.example.android.popularmovies.helper_classes.Movie;
 import com.example.android.popularmovies.helper_classes.MovieResponse_first;
+import com.example.android.popularmovies.utility.OnPosterListner;
 
 import java.util.List;
 
@@ -110,10 +110,11 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
         }
     }
 
-    public void getPref(){
+    public void getPref() {
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         category = sharedPref.getInt(getString(R.string.CATEGORY_SELECTED), 1);
     }
+
     public void startMovies() {
         imageNoInternet.setVisibility(View.GONE);
         textNoInternet.setVisibility(View.GONE);
@@ -227,12 +228,11 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId() == R.id.main_menu_bookmarks){
-            Intent intent = new Intent(this,BookmarksActivity.class);
+        if (item.getItemId() == R.id.main_menu_bookmarks) {
+            Intent intent = new Intent(this, BookmarksActivity.class);
             startActivity(intent);
             return true;
-        }else
-        if(checkInternet()) {
+        } else if (checkInternet()) {
             movies = null;
             mpage = 1;
             mMoviesAdapter = new MoviesAdapter(movies, this);
@@ -247,14 +247,14 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                 case R.id.main_menu_popular:
                     category = 0;
 
-                   startMovies();
+                    startMovies();
                     Toast.makeText(this, "Popular Movies", Toast.LENGTH_SHORT).show();
                     return true;
 
                 default:
                     return super.onOptionsItemSelected(item);
             }
-        }else{
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.dialog_message)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

@@ -19,6 +19,6 @@ public interface RetrofitInterface {
     Call<MovieResponse_first> getPopularMovies(@Query("api_key") String API_KEY, @Query("page") int num);
 
     @GET("movie/{id}")
-    Call<MovieDetails> getMovieDetails(@Path("id")int id, @Query("api_key") String API_KEY, @Query("append_to_response") String details);
+    Call<MovieDetails> getMovieDetails(@Path("id") int id, @Query("api_key") String API_KEY, @Query("append_to_response") String details);
 
 }

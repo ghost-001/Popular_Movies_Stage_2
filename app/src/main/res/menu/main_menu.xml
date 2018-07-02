@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/main_menu_bookmarks"
-        android:title="Bookmarks"/>
-<item android:id="@+id/main_menu_top_rated"
-    android:title="Top Rated Movies"/>
-    <item android:id="@+id/main_menu_popular"
-        android:title="Popular Movies"/>
+    <item
+        android:id="@+id/main_menu_bookmarks"
+        android:title="Bookmarks" />
+    <item
+        android:id="@+id/main_menu_top_rated"
+        android:title="Top Rated Movies" />
+    <item
+        android:id="@+id/main_menu_popular"
+        android:title="Popular Movies" />
 </menu>

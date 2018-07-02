@@ -1,7 +1,6 @@
 package com.example.android.popularmovies.helper_classes;
 
 import com.google.gson.annotations.Expose;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -16,7 +15,6 @@ public class Credits {
     private List<Crew> crew = null;
 
 
-
     public List<Cast> getCast() {
         return cast;
     }
@@ -24,6 +22,7 @@ public class Credits {
     public void setCast(List<Cast> cast) {
         this.cast = cast;
     }
+
     public List<Crew> getCrew() {
         return crew;
     }
