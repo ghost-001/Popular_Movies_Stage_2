@@ -11,21 +11,22 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.helper_classes.MovieDetails;
+import com.example.android.popularmovies.utility.onBookmarkClick;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.AllMovieViewHolder> {
 
+    private final onBookmarkClick mOnBookmarkClick;
     private List<MovieDetails> mMovieList;
     private Context mContext;
-    private String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
-    private String BASE_BACKDROP_URL = "https://image.tmdb.org/t/p/w300";
 
 
     public BookmarkAdapter(List<MovieDetails> movies, Context context) {
         mContext = context;
         mMovieList = movies;
+        mOnBookmarkClick = (onBookmarkClick) context;
 
     }
 
@@ -40,11 +41,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.AllMov
     @Override
     public void onBindViewHolder(@NonNull final BookmarkAdapter.AllMovieViewHolder holder, int position) {
         final MovieDetails movie = mMovieList.get(position);
-        //final String image_url = BASE_IMAGE_URL + movie.getPoster_path();
-        //final String backdrop_url = BASE_BACKDROP_URL + movie.getBackdrop_path();
-        // holder.setImage(image_url
+
         holder.movie_poster.setImageBitmap(movie.getImage_poster());
         holder.movie_name.setText(movie.getTitle());
+        holder.movie_poster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnBookmarkClick.OnBookmarkPosterclicked(movie.getMovie_id(), movie.getTitle());
+            }
+        });
 
     }
 

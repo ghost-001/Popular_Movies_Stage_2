@@ -22,7 +22,12 @@
         <activity
             android:name=".activity.DetailActivity"
             android:parentActivityName=".activity.MainActivity" />
-        <activity android:name=".activity.BookmarksActivity"></activity>
+        <activity
+            android:name=".activity.BookmarksActivity"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.BookmarksDetailActivity"
+            android:parentActivityName=".activity.BookmarksActivity" />
     </application>
 
 </manifest>

@@ -2,7 +2,6 @@ package com.example.android.popularmovies.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.AllRevie
     @Override
     public void onBindViewHolder(@NonNull ReviewsAdapter.AllReviewsViewHolder holder, int position) {
         final ReviewResults reviews = mReviews.get(position);
-        Log.d("AUTHOR", reviews.getAuthor());
+
         holder.mAuthor_tv.setText(reviews.getAuthor());
         holder.mExpandable_tv.setText(reviews.getContent());
 

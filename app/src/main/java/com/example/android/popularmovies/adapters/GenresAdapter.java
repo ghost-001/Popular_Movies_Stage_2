@@ -1,5 +1,6 @@
 package com.example.android.popularmovies.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,9 +15,13 @@ import java.util.List;
 
 public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresViewHolder> {
     private List<Genre> mGenres;
+    private String TEXT_COLOR;
+    private Context mContext;
 
-    public GenresAdapter(List<Genre> mGenre) {
+    public GenresAdapter(Context context, List<Genre> mGenre, String textColor) {
+        this.mContext = context;
         this.mGenres = mGenre;
+        this.TEXT_COLOR = textColor;
     }
 
     @NonNull
@@ -29,7 +34,11 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresV
     @Override
     public void onBindViewHolder(@NonNull GenresAdapter.AllGenresViewHolder holder, int position) {
         final Genre genre = mGenres.get(position);
+        if (TEXT_COLOR.equals("black")) {
+            holder.mGenre_tv.setTextColor(mContext.getResources().getColor(R.color.black));
+        }
         holder.mGenre_tv.setText(genre.getName());
+
 
     }
 
@@ -46,9 +55,7 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresV
             mGenre_tv = itemView.findViewById(R.id.genre_1);
         }
 
-        public void setGenre(String genre_name) {
-            mGenre_tv.setText(genre_name);
-        }
+
     }
 
 

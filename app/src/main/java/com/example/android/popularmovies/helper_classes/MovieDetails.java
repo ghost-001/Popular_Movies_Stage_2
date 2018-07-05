@@ -140,7 +140,7 @@ public class MovieDetails {
     public MovieDetails(int movie_id, String title, Integer runtime,
                         String releaseDate, List<Genre> genres, Bitmap image_poster,
                         Double voteAverage, String overview) {
-        String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+
         this.movie_id = movie_id;
         this.title = title;
         this.runtime = runtime;
@@ -162,7 +162,7 @@ public class MovieDetails {
     }
 
     public Bitmap getImage_poster() {
-        String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+
 
         /*Picasso.get().load(BASE_IMAGE_URL + posterPath)
                 .into(new Target() {

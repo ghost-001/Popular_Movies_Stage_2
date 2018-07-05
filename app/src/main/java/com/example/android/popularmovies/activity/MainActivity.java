@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
         retrofit_interface = Movie_api.getClient().create(RetrofitInterface.class);
 
 
-        load_Movies();
+        loadMovies();
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                 }
                 if (!isLoading && (totalItemCount - visibleItemCount) <= (pastVisibleItem + view_threshold)) {
                     ++mpage;
-                    load_Movies();
+                    loadMovies();
                     isLoading = false;
                 }
             }
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
     }
 
-    public void load_Movies() {
+    public void loadMovies() {
         mProgressBar.setVisibility(View.VISIBLE);
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();

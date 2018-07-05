@@ -12,10 +12,11 @@ import com.example.android.popularmovies.helper_classes.MovieDetails;
 @Database(entities = {MovieDetails.class}, version = 1, exportSchema = false)
 @TypeConverters({GenreConverter.class, ImageConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
-    private static final String LOG_TAG = "ROOM";
+    private static final String LOG_TAG = "TAG";
     private static final Object LOCK = new Object();
     private static final String DATABASE_NAME = "movies2.db";
     private static AppDatabase sInstance;
+
 
     public static AppDatabase getInstance(Context context) {
         if (sInstance == null) {

@@ -2,7 +2,6 @@ package com.example.android.popularmovies.adapters;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +46,6 @@ public class TrailerAdapter extends PagerAdapter {
         final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.youtube_trailer_image);
         ImageView mYoutube = (ImageView) imageLayout.findViewById(R.id.youtube_image);
 
-
-        //imageView.setImageResource(IMAGES.get(position));
-        Log.d("URL", BASE_URL + IMAGES.get(position) + "/0.jpg");
         Picasso.get().load(BASE_URL + IMAGES.get(position) + "/0.jpg")
                 .placeholder(R.drawable.photo)
                 .into(imageView);

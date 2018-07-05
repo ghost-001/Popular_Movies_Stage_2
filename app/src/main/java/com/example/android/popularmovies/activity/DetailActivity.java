@@ -188,6 +188,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
     public void loadImageColorInToolbar() {
 
+
         Picasso.get().load(backdrop_url)
                 .placeholder(R.drawable.photo)
                 .into(new Target() {
@@ -277,13 +278,16 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
     public void initViewsWithData() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+        mAppBarLayout.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
 
+        mActionButton.setVisibility(View.VISIBLE);
         Picasso.get().load(BASE_IMAGE_URL + mMovieDetails.getPosterPath())
                 .placeholder(R.drawable.photo)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        mPoster_image.setVisibility(View.VISIBLE);
                         mPoster_image.setImageBitmap(bitmap);
                         mMovieDetails.setImage_poster(bitmap);
                     }
@@ -299,6 +303,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                     }
                 });
         mMovie_name.setText(mMovieDetails.getTitle());
+        mMovie_name.setVisibility(View.VISIBLE);
         mMovie_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -309,25 +314,40 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         });
 
 
+        mLayout_rating.setVisibility(View.VISIBLE);
+
+
         mMovie_Rating.setText(String.format(Locale.ENGLISH, "%1$,.2f", mMovieDetails.getVoteAverage()));
+        mMovie_Rating.setVisibility(View.VISIBLE);
 
-        List<Genre> mGenre = mMovieDetails.getGenres();
-        GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-        mGenreRecyclerView.setLayoutManager(mLayoutManager);
-        GenresAdapter mGenresAdapter = new GenresAdapter(mGenre);
-        mGenreRecyclerView.setAdapter(mGenresAdapter);
-
+        mLayout_runtime.setVisibility(View.VISIBLE);
         mMovie_Runtime.setText(String.format(Locale.ENGLISH, "%d", mMovieDetails.getRuntime()));
+        mLayout_release.setVisibility(View.VISIBLE);
+
         try {
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date = fmt.parse(mMovieDetails.getReleaseDate());
             SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd yyyy", Locale.ENGLISH);
             String xx = fmtOut.format(date);
             mMovie_release.setText(xx);
+            mMovie_release.setVisibility(View.VISIBLE);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        TextView detailGenre = findViewById(R.id.detail_genre);
+        detailGenre.setVisibility(View.VISIBLE);
+        List<Genre> mGenre = mMovieDetails.getGenres();
+        GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
+        mGenreRecyclerView.setLayoutManager(mLayoutManager);
+        GenresAdapter mGenresAdapter = new GenresAdapter(this, mGenre, "white");
+        mGenreRecyclerView.setAdapter(mGenresAdapter);
+        mGenreRecyclerView.setVisibility(View.VISIBLE);
+
+
         mMovie_synopsis.setText(mMovieDetails.getOverview());
+        mLayout_card.setVisibility(View.VISIBLE);
+        mMovie_synopsis.setVisibility(View.VISIBLE);
+
         Credits mCast = mMovieDetails.getCredits();
         Videos mVideos = mMovieDetails.getVideos();
 
@@ -339,6 +359,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         mReviewRecylerView.setLayoutManager(mLayout);
         mReviewRecylerView.setAdapter(mReviewsAdapter);
 
+        mLayout_reviews.setVisibility(View.VISIBLE);
         mLayout_reviews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -376,6 +397,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         viewPager.setCycle(true);
         TrailerAdapter mTrailerAdapter = new TrailerAdapter(this, youtubeKeys);
         viewPager.setAdapter(mTrailerAdapter);
+        mLayout_trailer.setVisibility(View.VISIBLE);
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(viewPager);
         mTrailerAdapter.registerDataSetObserver(indicator.getDataSetObserver());
@@ -397,10 +419,8 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                 mAppDatabase.FavMoviesDao().insertMovies(mMovieDetails);
             }
         });
-        List<MovieDetails> cc = mAppDatabase.FavMoviesDao().loadAllMovies();
-        Toast.makeText(this, "ADDED" + mAppDatabase.FavMoviesDao().loadAllMovies(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "ADDED" + cc.size(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "ADDED", Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, "Added to Favourites", Toast.LENGTH_SHORT).show();
     }
 
     public List<String> getYoutubeKeys(List<VideoResults> results) {
