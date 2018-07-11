@@ -69,7 +69,7 @@ public class BookmarksActivity extends AppCompatActivity implements onBookmarkCl
 
     @Override
     public void OnBookmarkPosterclicked(Integer movie_id, String movie_name) {
-        Toast.makeText(this, "xx here ", Toast.LENGTH_SHORT).show();
+        
         Intent intent = new Intent(BookmarksActivity.this, BookmarksDetailActivity.class);
         intent.putExtra("movie_id", movie_id);
         intent.putExtra("movie_name", movie_name);
