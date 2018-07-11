@@ -47,13 +47,13 @@ public class TrailerAdapter extends PagerAdapter {
         ImageView mYoutube = (ImageView) imageLayout.findViewById(R.id.youtube_image);
 
         Picasso.get().load(BASE_URL + IMAGES.get(position) + "/0.jpg")
-                .placeholder(R.drawable.photo)
+                .placeholder(R.drawable.image_loading)
                 .into(imageView);
         view.addView(imageLayout, 0);
         mYoutube.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mOnYoutubeClickListener.OnYoutubeclicked(IMAGES.get(position));
+                mOnYoutubeClickListener.OnYoutubeClicked(IMAGES.get(position));
             }
         });
         return imageLayout;

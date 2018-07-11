@@ -26,7 +26,7 @@
                 android:layout_height="350dp"
                 android:contentDescription="@string/image"
                 android:scaleType="centerCrop"
-                android:src="@drawable/photo" />
+                android:src="@drawable/image_loading" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/detail_toolbar"
@@ -69,7 +69,7 @@
                 android:layout_marginTop="21dp"
                 android:layout_toEndOf="@id/movie_poster"
                 android:background="@drawable/round_detail_ratings"
-                android:padding="6dp"
+                android:padding="10dp"
                 android:visibility="gone">
 
                 <TextView
@@ -91,13 +91,16 @@
             </RelativeLayout>
 
             <ImageView
+                android:id="@+id/detail_rating_star"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="21dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="17dp"
+                android:padding="10dp"
                 android:layout_toEndOf="@id/detail_relative_rating"
                 android:contentDescription="@string/rating_star"
-                android:src="@drawable/ic_star" />
+                android:src="@drawable/ic_star_black_32dp"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/detail_relative_runtime"
@@ -107,14 +110,13 @@
                 android:layout_marginTop="9dp"
                 android:layout_toEndOf="@id/movie_poster"
                 android:background="@drawable/round_detail_ratings"
-                android:padding="4dp"
+                android:padding="10dp"
                 android:visibility="gone">
 
                 <TextView
                     android:id="@+id/detail_runtime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:text="@string/run_time"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
@@ -125,8 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_toEndOf="@id/detail_runtime"
-                    android:paddingLeft="8dp"
+                    android:layout_below="@id/detail_runtime"
                     android:paddingRight="8dp"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
@@ -151,7 +152,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_toEndOf="@id/movie_poster"
                 android:background="@drawable/round_detail_release"
-                android:padding="12dp"
+                android:padding="10dp"
                 android:visibility="gone">
 
                 <TextView
@@ -178,18 +179,19 @@
                 android:id="@+id/detail_movie_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/movie_poster"
-                android:layout_margin="6dp"
+                android:layout_below="@id/detail_relative_release"
+                android:layout_margin="15dp"
+                android:layout_marginLeft="10dp"
                 android:background="@drawable/round_backgroud_tv"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:marqueeRepeatLimit="marquee_forever"
-                android:padding="8dp"
+                android:padding="10dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -199,9 +201,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/detail_movie_name"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/round_detail_ratings"
-                android:padding="6dp"
+                android:padding="10dp"
                 android:text="@string/genres"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
@@ -215,7 +217,7 @@
                 android:layout_below="@id/detail_movie_name"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="15dp"
                 android:layout_toEndOf="@id/detail_genre"
                 android:background="@drawable/round_detail_release"
                 android:padding="6dp"
@@ -228,7 +230,7 @@
                 android:layout_below="@id/detail_genre_recycler"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="20dp"
                 android:elevation="12dp"
                 app:cardCornerRadius="30dp">
 
@@ -244,17 +246,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingEnd="4dp"
-                        android:paddingStart="8dp"
+                        android:paddingStart="20dp"
                         android:paddingTop="10dp"
                         android:text="@string/synopsis"
                         android:textColor="@android:color/white"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         android:textStyle="italic" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@id/detail_synopsis"
+                        android:layout_marginTop="4dp"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:background="@android:color/white" />
@@ -264,25 +267,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/detail_synopsis"
-                        android:padding="8dp"
-                        android:paddingBottom="10dp"
+                        android:padding="20dp"
+                        android:textSize="16sp"
                         android:textColor="@android:color/white" />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
             <View
-                android:id="@+id/veiw_1"
+                android:id="@+id/detail_view_1"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@id/detail_synopsis_cardview"
-                android:layout_marginTop="15dp"
-                android:background="@android:color/white" />
+                android:layout_marginTop="20dp"
+                android:background="@android:color/white"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/detail_trailer_relative"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/veiw_1"
+                android:layout_below="@id/detail_view_1"
                 android:background="@drawable/rectangle_detail_trailer"
                 android:visibility="gone">
 
@@ -310,7 +314,8 @@
                     <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
                         android:id="@+id/detail_youTubePlay"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:background="@drawable/no_trailers"/>
 
                     <me.relex.circleindicator.CircleIndicator
                         android:id="@+id/indicator"
@@ -330,7 +335,8 @@
                     android:layout_height="2dp"
                     android:layout_below="@id/detail_youtube_cardview"
                     android:layout_marginTop="15dp"
-                    android:background="@android:color/white" />
+                    android:background="@android:color/white"
+                    android:visibility="visible"/>
 
 
             </RelativeLayout>
@@ -342,7 +348,7 @@
                 android:layout_below="@id/detail_trailer_relative"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="20dp"
                 android:elevation="12dp"
                 app:cardCornerRadius="30dp">
 
@@ -351,7 +357,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_detail_ratings"
-                    android:padding="4dp"
+                    android:padding="10dp"
                     android:paddingBottom="8dp"
                     android:visibility="gone">
 
@@ -362,7 +368,7 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="8dp"
                         android:paddingTop="10dp"
-                        android:text="Reviews"
+                        android:text="@string/reviews"
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         android:textStyle="italic" />
@@ -396,7 +402,7 @@
                         android:paddingEnd="4dp"
                         android:paddingStart="8dp"
                         android:paddingTop="10dp"
-                        android:text="No reviews yet"
+                        android:text="@string/no_reviews_yet"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:textStyle="italic"
@@ -413,9 +419,10 @@
         android:id="@+id/detail_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:fabSize="normal"
         android:layout_margin="8dp"
         android:elevation="10dp"
-        android:src="@drawable/ic_fav"
+        android:src="@drawable/ic_favorite_fav1_32dp"
         android:visibility="gone"
         app:layout_anchor="@id/detail_app_bar_layout"
         app:layout_anchorGravity="bottom|right|end"

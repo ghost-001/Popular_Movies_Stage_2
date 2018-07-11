@@ -2,7 +2,7 @@ package com.example.android.popularmovies.database;
 
 import android.arch.persistence.room.TypeConverter;
 
-import com.example.android.popularmovies.helper_classes.Genre;
+import com.example.android.popularmovies.model.Genre;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

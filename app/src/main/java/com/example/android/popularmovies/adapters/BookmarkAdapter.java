@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.helper_classes.MovieDetails;
+import com.example.android.popularmovies.model.MovieDetails;
 import com.example.android.popularmovies.utility.onBookmarkClick;
 import com.squareup.picasso.Picasso;
 
@@ -83,7 +83,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.AllMov
         public void setImage(String url) {
 
             Picasso.get().load(url)
-                    .placeholder(R.drawable.photo).into(movie_poster);
+                    .placeholder(R.drawable.image_loading).into(movie_poster);
 
         }
     }

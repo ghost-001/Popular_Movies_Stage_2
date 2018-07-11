@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/main_menu_bookmarks"
-        android:title="Favourites" />
+        android:title="@string/favourites" />
     <item
         android:id="@+id/main_menu_top_rated"
-        android:title="Top Rated Movies" />
+        android:title="@string/top_rated_movies" />
     <item
         android:id="@+id/main_menu_popular"
-        android:title="Popular Movies" />
+        android:title="@string/popular_movies" />
 </menu>

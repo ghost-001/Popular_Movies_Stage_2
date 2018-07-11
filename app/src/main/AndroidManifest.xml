@@ -21,7 +21,8 @@
         </activity>
         <activity
             android:name=".activity.DetailActivity"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/Transparent"/>
         <activity
             android:name=".activity.BookmarksActivity"
             android:parentActivityName=".activity.MainActivity" />

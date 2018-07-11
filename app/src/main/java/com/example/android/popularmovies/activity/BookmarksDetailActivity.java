@@ -2,8 +2,10 @@ package com.example.android.popularmovies.activity;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -13,24 +15,20 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.AddMoviesViewModel;
-import com.example.android.popularmovies.AddMoviesViewModelFactory;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapters.GenresAdapter;
 import com.example.android.popularmovies.database.AppDatabase;
-import com.example.android.popularmovies.helper_classes.Genre;
-import com.example.android.popularmovies.helper_classes.MovieDetails;
+import com.example.android.popularmovies.factory.AddMoviesViewModelFactory;
+import com.example.android.popularmovies.model.Genre;
+import com.example.android.popularmovies.model.MovieDetails;
+import com.example.android.popularmovies.utility.AppExecutors;
+import com.example.android.popularmovies.viewModel.AddMoviesViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,6 +53,7 @@ public class BookmarksDetailActivity extends AppCompatActivity {
     private LiveData<MovieDetails> mMovieDetails;
     private Toolbar mToolbar;
     private AppBarLayout mAppBarLayout;
+    private Boolean checkBookmark = true;
 
 
     @Override
@@ -62,21 +61,22 @@ public class BookmarksDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmarks_detail);
 
-        Log.d("CYCLE","On Create");
+        Log.d("CYCLE", "On Create");
         initViews();
         mProgressBar.setVisibility(View.VISIBLE);
         movie_id = getIntent().getIntExtra("movie_id", 0);
         movie_name = getIntent().getStringExtra("movie_name");
         final AppDatabase mDb = AppDatabase.getInstance(getApplicationContext());
 
-        AddMoviesViewModelFactory factory = new AddMoviesViewModelFactory(mDb,movie_id);
+        AddMoviesViewModelFactory factory = new AddMoviesViewModelFactory(mDb, movie_id);
         final AddMoviesViewModel viewModel
-                                        = ViewModelProviders.of(this,factory).get(AddMoviesViewModel.class);
+                = ViewModelProviders.of(this, factory).get(AddMoviesViewModel.class);
         viewModel.getMovies().observe(this, new Observer<MovieDetails>() {
 
 
             @Override
             public void onChanged(@Nullable MovieDetails movieDetails) {
+                Log.d("TAG", "Updating list of movies from LIVEDATA in MainViewModel");
                 viewModel.getMovies().removeObserver(this);
                 initViewsWithData(movieDetails);
             }
@@ -107,10 +107,11 @@ public class BookmarksDetailActivity extends AppCompatActivity {
     }
 
 
-    public void initViewsWithData(MovieDetails movieDetails) {
+    public void initViewsWithData(final MovieDetails movieDetails) {
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(movie_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setFab();
         mProgressBar.setVisibility(View.GONE);
 
         mPoster_image.setImageBitmap(movieDetails.getImage_poster());
@@ -139,25 +140,52 @@ public class BookmarksDetailActivity extends AppCompatActivity {
         mActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveLocalData();
+               if(checkBookmark) {
+                   deleteFromDatabase(movie_id);
+                   checkBookmark = false;
+                   setFab();
+               }else{
+                   saveLocalData(movieDetails);
+                   checkBookmark = true;
+                   setFab();
+               }
+
             }
         });
     }
 
-    public void saveLocalData() {
+    public void saveLocalData(final MovieDetails mMovieDetails) {
 
-
-     /*   AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        mAppDatabase = AppDatabase.getInstance(getApplicationContext());
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mAppDatabase.FavMoviesDao().insertMovies(movieDetails);
+                mAppDatabase.FavMoviesDao().insertMovies(mMovieDetails);
             }
-        });*/
+        });
 
-        Toast.makeText(this, "ADDED", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Added to Favourites", Toast.LENGTH_SHORT).show();
     }
-
-
+    public void deleteFromDatabase(Integer id){
+        mAppDatabase = AppDatabase.getInstance(getApplicationContext());
+        mAppDatabase.FavMoviesDao().deleteMovieByID(id);
+        Toast.makeText(BookmarksDetailActivity.this,"Deleted From Favourites",Toast.LENGTH_SHORT).show();
+    }
+    public void setFab() {
+        if (checkBookmark) {
+            //setting white color as background
+            mActionButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffffff")));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_bookmark_fav, this.getTheme()));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_bookmark_fav2, this.getTheme()));
+            }
+            //setting red color as background
+            mActionButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+        }
+    }
 
 }
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.helper_classes.ReviewResults;
+import com.example.android.popularmovies.model.ReviewResults;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.AllRevie
     @NonNull
     @Override
     public ReviewsAdapter.AllReviewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reviews_expandable, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_reviews, parent, false);
         return new AllReviewsViewHolder(view);
     }
 

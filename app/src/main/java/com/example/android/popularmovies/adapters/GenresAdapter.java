@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.helper_classes.Genre;
+import com.example.android.popularmovies.model.Genre;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class GenresAdapter extends RecyclerView.Adapter<GenresAdapter.AllGenresV
     @NonNull
     @Override
     public GenresAdapter.AllGenresViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.genre_single, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_genre, parent, false);
         return new AllGenresViewHolder(view);
     }
 

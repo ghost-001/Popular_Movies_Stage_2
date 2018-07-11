@@ -17,12 +17,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.MainViewModel;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapters.BookmarkAdapter;
 import com.example.android.popularmovies.database.AppDatabase;
-import com.example.android.popularmovies.helper_classes.MovieDetails;
+import com.example.android.popularmovies.model.MovieDetails;
 import com.example.android.popularmovies.utility.onBookmarkClick;
+import com.example.android.popularmovies.viewModel.MainViewModel;
 
 import java.util.List;
 

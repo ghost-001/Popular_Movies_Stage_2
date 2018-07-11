@@ -8,7 +8,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.example.android.popularmovies.helper_classes.MovieDetails;
+import com.example.android.popularmovies.model.MovieDetails;
 
 import java.util.List;
 
@@ -30,5 +30,8 @@ public interface FavMoviesDao {
     LiveData<MovieDetails> loadMovieByID(int id);
 
     @Query("DELETE FROM FavMovies")
-     void deleteTable();
+    void deleteTable();
+
+    @Query("Delete FROM FavMovies where movie_id =:id")
+    void deleteMovieByID(int id);
 }

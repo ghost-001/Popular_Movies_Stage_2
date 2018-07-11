@@ -1,9 +1,12 @@
 package com.example.android.popularmovies.activity;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -11,8 +14,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -26,28 +31,30 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.viewModel.DetailActivityMovieViewModel;
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.adapters.GenresAdapter;
 import com.example.android.popularmovies.adapters.ReviewsAdapter;
 import com.example.android.popularmovies.adapters.TrailerAdapter;
-import com.example.android.popularmovies.api_manage.Movie_api;
-import com.example.android.popularmovies.api_manage.RetrofitInterface;
 import com.example.android.popularmovies.database.AppDatabase;
-import com.example.android.popularmovies.helper_classes.Credits;
-import com.example.android.popularmovies.helper_classes.Genre;
-import com.example.android.popularmovies.helper_classes.MovieDetails;
-import com.example.android.popularmovies.helper_classes.ReviewResults;
-import com.example.android.popularmovies.helper_classes.Reviews;
-import com.example.android.popularmovies.helper_classes.VideoResults;
-import com.example.android.popularmovies.helper_classes.Videos;
+import com.example.android.popularmovies.factory.DetailActivityMovieFactory;
+import com.example.android.popularmovies.model.Credits;
+import com.example.android.popularmovies.model.Genre;
+import com.example.android.popularmovies.model.MovieDetails;
+import com.example.android.popularmovies.model.ReviewResults;
+import com.example.android.popularmovies.model.Reviews;
+import com.example.android.popularmovies.model.VideoResults;
+import com.example.android.popularmovies.model.Videos;
 import com.example.android.popularmovies.utility.AppExecutors;
 import com.example.android.popularmovies.utility.OnYoutubeClickListener;
+import com.example.android.popularmovies.viewModel.MainViewModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -60,47 +67,48 @@ import java.util.Locale;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import me.relex.circleindicator.CircleIndicator;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity implements OnYoutubeClickListener {
-    private final String getVideos = "videos,reviews,credits";
-    private String API_KEY;
+
     private String TAG = "DetailActivity";
     private Integer color = Color.parseColor("#000000");
-    private int dark_muted_color;
-    private int muted_color;
-    private int movie_id;
-    private String movie_name;
-    private String backdrop_url;
-    private ImageView toolbar_image;
-    private ImageView mPoster_image;
-    private TextView mMovie_name;
-    private TextView mMovie_Rating;
-    private TextView mMovie_Runtime;
-    private TextView mMovie_Genre;
-    private TextView mMovie_release;
-    private TextView mMovie_synopsis;
+    private int mDarkMutedColor;
+    private int mMutedColor;
+    private int movieId;
+    private String movieName;
+    private String backdropUrl;
+    private String posterUrl;
+    private ImageView mToolbarImage;
+    private ImageView mPosterImage;
+    private TextView mMovieName;
+    private TextView mMovieRating;
+    private TextView mMovieRuntime;
+    private TextView mMovieGenre;
+    private TextView mMovieRelease;
+    private TextView mMovieSynopsis;
+    private View mView;
+    private ImageView mRatingStar;
     private ProgressBar mProgressBar;
-    private RelativeLayout mLayout_rating, mLayout_runtime, mLayout_release, mLayout_card, mLayout_trailer;
-    private RelativeLayout mLayout_reviews;
-    private ImageView mReview_image;
+    private RelativeLayout mLayoutRating, mLayoutRuntime, mLayoutRelease, mLayoutCard, mLayoutTrailer;
+    private RelativeLayout mLayoutReviews;
+    private ImageView mReviewImage;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private NestedScrollView mNested;
     private AppBarLayout mAppBarLayout;
-    private RecyclerView mGenreRecyclerView, mReviewRecylerView;
+    private RecyclerView mGenreRecyclerView, mReviewRecyclerView;
     private FloatingActionButton mActionButton;
     private AppDatabase mAppDatabase;
-    private RetrofitInterface retrofitInterface;
-    private MovieDetails mMovieDetails;
     private Boolean REVIEWS_SHOW = true;
+    private Boolean checkBookmark = false;
+    private Integer movieDbId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        mProgressBar = findViewById(R.id.detail_progress);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         if (!checkInternet()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -113,11 +121,11 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
             builder.create();
             builder.show();
         } else {
-            API_KEY = getResources().getString(R.string.API_KEY);
-            movie_id = getIntent().getIntExtra("movie_id", 0);
-            movie_name = getIntent().getStringExtra("movie_name");
-            backdrop_url = getIntent().getStringExtra("poster_url");
-            retrofitInterface = Movie_api.getClient().create(RetrofitInterface.class);
+            postponeEnterTransition();
+            movieId = getIntent().getIntExtra("movie_id", 0);
+            movieName = getIntent().getStringExtra("movie_name");
+            backdropUrl = getIntent().getStringExtra("backdrop_url");
+            posterUrl = getIntent().getStringExtra("poster_url");
             initViews();
             mProgressBar.setVisibility(View.VISIBLE);
             loadImageColorInToolbar();
@@ -127,7 +135,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                 @Override
                 public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                     if (verticalOffset == -mCollapsingToolbarLayout.getHeight() + mToolbar.getHeight()) {
-                        mCollapsingToolbarLayout.setTitle(movie_name);
+                        mCollapsingToolbarLayout.setTitle(movieName);
                         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     } else {
                         mCollapsingToolbarLayout.setTitle(" ");
@@ -149,37 +157,50 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         }
     }
 
+    private void scheduleStartPostponedTransition(final ImageView imageView) {
+        imageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mPosterImage.getViewTreeObserver().removeOnPreDrawListener(this);
+                startPostponedEnterTransition();
+                return true;
+            }
+        });
+    }
+
     public void initViews() {
 
-        mAppDatabase = AppDatabase.getInstance(getApplicationContext());
+
         mToolbar = findViewById(R.id.detail_toolbar);
         mNested = findViewById(R.id.detail_nested);
         mAppBarLayout = findViewById(R.id.detail_app_bar_layout);
         mCollapsingToolbarLayout = findViewById(R.id.detail_collapseToolbarLayout);
         setSupportActionBar(mToolbar);
 
-        mProgressBar = findViewById(R.id.detail_progress);
-        toolbar_image = findViewById(R.id.detail_collapse_iv);
+
+        mToolbarImage = findViewById(R.id.detail_collapse_iv);
 
 
         mGenreRecyclerView = findViewById(R.id.detail_genre_recycler);
-        mReviewRecylerView = findViewById(R.id.detail_reviews_recycler);
-        mLayout_rating = findViewById(R.id.detail_relative_rating);
-        mLayout_runtime = findViewById(R.id.detail_relative_runtime);
-        mLayout_release = findViewById(R.id.detail_relative_release);
-        mLayout_card = findViewById(R.id.detail_card_relative);
-        mLayout_trailer = findViewById(R.id.detail_trailer_relative);
-        mLayout_reviews = findViewById(R.id.detail_reviews_relative);
-        mMovie_Genre = findViewById(R.id.detail_genre);
+        mReviewRecyclerView = findViewById(R.id.detail_reviews_recycler);
+        mLayoutRating = findViewById(R.id.detail_relative_rating);
+        mLayoutRuntime = findViewById(R.id.detail_relative_runtime);
+        mLayoutRelease = findViewById(R.id.detail_relative_release);
+        mLayoutCard = findViewById(R.id.detail_card_relative);
+        mLayoutTrailer = findViewById(R.id.detail_trailer_relative);
+        mLayoutReviews = findViewById(R.id.detail_reviews_relative);
+        mMovieGenre = findViewById(R.id.detail_genre);
 
 
-        mPoster_image = findViewById(R.id.movie_poster);
-        mMovie_name = findViewById(R.id.detail_movie_name);
-        mMovie_Rating = findViewById(R.id.detail_rating_tv);
-        mMovie_Runtime = findViewById(R.id.detail_runtime_tv);
-        mMovie_release = findViewById(R.id.detail_release_tv);
-        mMovie_synopsis = findViewById(R.id.detail_synopsis_tv);
-        mReview_image = findViewById(R.id.detail_review_image);
+        mPosterImage = findViewById(R.id.movie_poster);
+        mMovieName = findViewById(R.id.detail_movie_name);
+        mMovieRating = findViewById(R.id.detail_rating_tv);
+        mMovieRuntime = findViewById(R.id.detail_runtime_tv);
+        mMovieRelease = findViewById(R.id.detail_release_tv);
+        mMovieSynopsis = findViewById(R.id.detail_synopsis_tv);
+        mReviewImage = findViewById(R.id.detail_review_image);
+        mRatingStar = findViewById(R.id.detail_rating_star);
+        mView = findViewById(R.id.detail_view_1);
 
         mActionButton = findViewById(R.id.detail_action);
 
@@ -189,15 +210,15 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
     public void loadImageColorInToolbar() {
 
 
-        Picasso.get().load(backdrop_url)
-                .placeholder(R.drawable.photo)
+        Picasso.get().load(backdropUrl)
+                .placeholder(R.drawable.image_loading)
                 .into(new Target() {
 
 
                           @Override
                           public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
-                              toolbar_image.setImageBitmap(bitmap);
+                              mToolbarImage.setImageBitmap(bitmap);
                               Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                                   @Override
                                   public void onGenerated(@NonNull Palette palette) {
@@ -205,8 +226,8 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                                       if (textSwatch != null) {
                                           color = textSwatch.getRgb();
                                       }
-                                      dark_muted_color = palette.getDarkMutedColor(color);
-                                      muted_color = palette.getMutedColor(color);
+                                      mDarkMutedColor = palette.getDarkMutedColor(color);
+                                      mMutedColor = palette.getMutedColor(color);
                                       setBackgroundColor();
                                   }
                               });
@@ -231,64 +252,78 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
 
         mCollapsingToolbarLayout.setBackgroundColor(color);
-        mCollapsingToolbarLayout.setStatusBarScrimColor(dark_muted_color);
-        mCollapsingToolbarLayout.setContentScrimColor(dark_muted_color);
+        mCollapsingToolbarLayout.setStatusBarScrimColor(mDarkMutedColor);
+        mCollapsingToolbarLayout.setContentScrimColor(mDarkMutedColor);
 
-        mNested.setBackgroundColor(muted_color);
+        mNested.setBackgroundColor(mMutedColor);
 
-        final GradientDrawable gradientDrawable_name = (GradientDrawable) mMovie_name.getBackground().mutate();
-        final GradientDrawable gradientDrawable_relative_rating = (GradientDrawable) mLayout_rating.getBackground().mutate();
-        final GradientDrawable gradientDrawable_relative_runtime = (GradientDrawable) mLayout_runtime.getBackground().mutate();
-        final GradientDrawable gradientDrawable_genre = (GradientDrawable) mMovie_Genre.getBackground().mutate();
+        final GradientDrawable gradientDrawable_name = (GradientDrawable) mMovieName.getBackground().mutate();
+        final GradientDrawable gradientDrawable_relative_rating = (GradientDrawable) mLayoutRating.getBackground().mutate();
+        final GradientDrawable gradientDrawable_relative_runtime = (GradientDrawable) mLayoutRuntime.getBackground().mutate();
+        final GradientDrawable gradientDrawable_genre = (GradientDrawable) mMovieGenre.getBackground().mutate();
         final GradientDrawable gradientDrawable_genre_recycler = (GradientDrawable) mGenreRecyclerView.getBackground().mutate();
-        final GradientDrawable gradientDrawable_relative_release = (GradientDrawable) mLayout_release.getBackground().mutate();
-        final GradientDrawable gradientDrawable_relative_card = (GradientDrawable) mLayout_card.getBackground().mutate();
-        final GradientDrawable gradientDrawable_relative_trailer = (GradientDrawable) mLayout_trailer.getBackground().mutate();
-        final GradientDrawable gradientDrawable_relative_review = (GradientDrawable) mLayout_reviews.getBackground().mutate();
+        final GradientDrawable gradientDrawable_relative_release = (GradientDrawable) mLayoutRelease.getBackground().mutate();
+        final GradientDrawable gradientDrawable_relative_card = (GradientDrawable) mLayoutCard.getBackground().mutate();
+        final GradientDrawable gradientDrawable_relative_trailer = (GradientDrawable) mLayoutTrailer.getBackground().mutate();
+        final GradientDrawable gradientDrawable_relative_review = (GradientDrawable) mLayoutReviews.getBackground().mutate();
 
-        gradientDrawable_name.setColor(dark_muted_color);
-        gradientDrawable_relative_rating.setColor(dark_muted_color);
-        gradientDrawable_relative_runtime.setColor(dark_muted_color);
-        gradientDrawable_genre.setColor(dark_muted_color);
-        gradientDrawable_genre_recycler.setColor(dark_muted_color);
-        gradientDrawable_relative_release.setColor(dark_muted_color);
-        gradientDrawable_relative_card.setColor(dark_muted_color);
-        gradientDrawable_relative_trailer.setColor(dark_muted_color);
-        gradientDrawable_relative_review.setColor(dark_muted_color);
+        gradientDrawable_name.setColor(mDarkMutedColor);
+        gradientDrawable_relative_rating.setColor(mDarkMutedColor);
+        gradientDrawable_relative_runtime.setColor(mDarkMutedColor);
+        gradientDrawable_genre.setColor(mDarkMutedColor);
+        gradientDrawable_genre_recycler.setColor(mDarkMutedColor);
+        gradientDrawable_relative_release.setColor(mDarkMutedColor);
+        gradientDrawable_relative_card.setColor(mDarkMutedColor);
+        gradientDrawable_relative_trailer.setColor(mDarkMutedColor);
+        gradientDrawable_relative_review.setColor(mDarkMutedColor);
     }
 
     public void loadMovieDetails() {
-        Call<MovieDetails> call = retrofitInterface.getMovieDetails(movie_id, API_KEY, getVideos);
-        call.enqueue((new Callback<MovieDetails>() {
-            @Override
-            public void onResponse(Call<MovieDetails> call, Response<MovieDetails> response) {
-                if (response.isSuccessful()) {
-                    mMovieDetails = response.body();
-                    initViewsWithData();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<MovieDetails> call, Throwable t) {
+        DetailActivityMovieFactory factory = new DetailActivityMovieFactory(movieId);
+        final DetailActivityMovieViewModel viewModel
+                = ViewModelProviders.of(this, factory).get(DetailActivityMovieViewModel.class);
 
+        viewModel.getDetailsLiveData().observe(this, new Observer<MovieDetails>() {
+            @Override
+            public void onChanged(@Nullable MovieDetails movieDetails) {
+                initViewsWithData(movieDetails);
             }
-        }));
+        });
+
     }
 
-    public void initViewsWithData() {
+    public void setFab() {
+        if (checkBookmark) {
+            //setting white color as background
+            mActionButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#ffffff")));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_bookmark_fav, this.getTheme()));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mActionButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_bookmark_fav2, this.getTheme()));
+            }
+            //setting red color as background
+            mActionButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FF0000")));
+        }
+    }
+
+    public void initViewsWithData(final MovieDetails mMovieDetails) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
         mAppBarLayout.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+        scheduleStartPostponedTransition(mPosterImage);
 
-        mActionButton.setVisibility(View.VISIBLE);
-        Picasso.get().load(BASE_IMAGE_URL + mMovieDetails.getPosterPath())
-                .placeholder(R.drawable.photo)
+
+        Picasso.get().load(posterUrl)
+                .placeholder(R.drawable.image_loading)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        mPoster_image.setVisibility(View.VISIBLE);
-                        mPoster_image.setImageBitmap(bitmap);
+
+                        mPosterImage.setImageBitmap(bitmap);
+                        mPosterImage.setVisibility(View.VISIBLE);
                         mMovieDetails.setImage_poster(bitmap);
                     }
 
@@ -302,52 +337,61 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
                     }
                 });
-        mMovie_name.setText(mMovieDetails.getTitle());
-        mMovie_name.setVisibility(View.VISIBLE);
-        mMovie_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+
+        checkIfBookmark();
+        setFab();
+        mActionButton.setVisibility(View.VISIBLE);
+        mMovieName.setText(movieName);
+        mMovieName.setVisibility(View.VISIBLE);
+        mMovieName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    mMovie_name.setSelected(true);
+                    mMovieName.setSelected(true);
                 }
             }
         });
 
 
-        mLayout_rating.setVisibility(View.VISIBLE);
+        mMovieRating.setText(String.format(Locale.ENGLISH, "%1$,.2f", mMovieDetails.getVoteAverage()));
+        mLayoutRating.setVisibility(View.VISIBLE);
+        mRatingStar.setVisibility(View.VISIBLE);
+        mMovieRating.setVisibility(View.VISIBLE);
 
 
-        mMovie_Rating.setText(String.format(Locale.ENGLISH, "%1$,.2f", mMovieDetails.getVoteAverage()));
-        mMovie_Rating.setVisibility(View.VISIBLE);
+        mMovieRuntime.setText(String.format(Locale.ENGLISH, "%d", mMovieDetails.getRuntime()));
+        mLayoutRuntime.setVisibility(View.VISIBLE);
 
-        mLayout_runtime.setVisibility(View.VISIBLE);
-        mMovie_Runtime.setText(String.format(Locale.ENGLISH, "%d", mMovieDetails.getRuntime()));
-        mLayout_release.setVisibility(View.VISIBLE);
 
         try {
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date = fmt.parse(mMovieDetails.getReleaseDate());
             SimpleDateFormat fmtOut = new SimpleDateFormat("MMM dd yyyy", Locale.ENGLISH);
             String xx = fmtOut.format(date);
-            mMovie_release.setText(xx);
-            mMovie_release.setVisibility(View.VISIBLE);
+            mMovieRelease.setText(xx);
+            mMovieRelease.setVisibility(View.VISIBLE);
+            mLayoutRelease.setVisibility(View.VISIBLE);
         } catch (ParseException e) {
             e.printStackTrace();
+            mLayoutRelease.setVisibility(View.VISIBLE);
         }
-        TextView detailGenre = findViewById(R.id.detail_genre);
-        detailGenre.setVisibility(View.VISIBLE);
+
         List<Genre> mGenre = mMovieDetails.getGenres();
         GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         mGenreRecyclerView.setLayoutManager(mLayoutManager);
         GenresAdapter mGenresAdapter = new GenresAdapter(this, mGenre, "white");
         mGenreRecyclerView.setAdapter(mGenresAdapter);
+
+        mMovieGenre.setVisibility(View.VISIBLE);
         mGenreRecyclerView.setVisibility(View.VISIBLE);
 
 
-        mMovie_synopsis.setText(mMovieDetails.getOverview());
-        mLayout_card.setVisibility(View.VISIBLE);
-        mMovie_synopsis.setVisibility(View.VISIBLE);
-
+        mMovieSynopsis.setText(mMovieDetails.getOverview());
+        mLayoutCard.setVisibility(View.VISIBLE);
+        mMovieSynopsis.setVisibility(View.VISIBLE);
+        mView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
         Credits mCast = mMovieDetails.getCredits();
         Videos mVideos = mMovieDetails.getVideos();
 
@@ -356,18 +400,19 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         final List<ReviewResults> reviewResults = mReviews.getResults();
         ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(reviewResults);
         LinearLayoutManager mLayout = new LinearLayoutManager(this);
-        mReviewRecylerView.setLayoutManager(mLayout);
-        mReviewRecylerView.setAdapter(mReviewsAdapter);
+        mReviewRecyclerView.setLayoutManager(mLayout);
+        mReviewRecyclerView.setAdapter(mReviewsAdapter);
 
-        mLayout_reviews.setVisibility(View.VISIBLE);
-        mLayout_reviews.setOnClickListener(new View.OnClickListener() {
+        mLayoutReviews.setVisibility(View.VISIBLE);
+        mLayoutReviews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (REVIEWS_SHOW) {
-                    mReview_image.setImageDrawable(getResources().getDrawable(R.drawable.arrow_down, getTheme()));
+                    mReviewImage.setImageDrawable(getResources().getDrawable(R.drawable.arrow_down, getTheme()));
                     if (!reviewResults.isEmpty()) {
-                        mReviewRecylerView.setVisibility(View.VISIBLE);
+                        mReviewRecyclerView.setVisibility(View.VISIBLE);
+
                         REVIEWS_SHOW = false;
                     } else {
                         TextView tv = findViewById(R.id.detail_no_reviews);
@@ -375,9 +420,9 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                         REVIEWS_SHOW = false;
                     }
                 } else if (!REVIEWS_SHOW) {
-                    mReview_image.setImageDrawable(getResources().getDrawable(R.drawable.arrow_up, getTheme()));
+                    mReviewImage.setImageDrawable(getResources().getDrawable(R.drawable.arrow_up, getTheme()));
                     if (!reviewResults.isEmpty()) {
-                        mReviewRecylerView.setVisibility(View.GONE);
+                        mReviewRecyclerView.setVisibility(View.GONE);
                         REVIEWS_SHOW = true;
                     } else {
                         TextView tv = findViewById(R.id.detail_no_reviews);
@@ -397,22 +442,59 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         viewPager.setCycle(true);
         TrailerAdapter mTrailerAdapter = new TrailerAdapter(this, youtubeKeys);
         viewPager.setAdapter(mTrailerAdapter);
-        mLayout_trailer.setVisibility(View.VISIBLE);
+
+
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(viewPager);
+        mLayoutTrailer.setVisibility(View.VISIBLE);
         mTrailerAdapter.registerDataSetObserver(indicator.getDataSetObserver());
+
 
         mActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveLocalData();
+                if (!checkBookmark) {
+                    saveLocalData(mMovieDetails);
+                    checkBookmark = true;
+                    setFab();
+                } else {
+                    deleteFromDatabase(movieDbId);
+                    checkBookmark = false;
+                    setFab();
+
+                }
             }
         });
+
     }
 
-    public void saveLocalData() {
+    public void checkIfBookmark() {
 
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<MovieDetails>>() {
+            @Override
+            public void onChanged(@Nullable List<MovieDetails> movieDetails) {
+                if (movieDetails.size() != 0) {
+                    for (MovieDetails m : movieDetails) {
+                        if (m.getId() == movieId) {
+                            checkBookmark = true;
+                            movieDbId = m.getMovie_id();
+                        }
+                    }
+                }
 
+            }
+        });
+
+    }
+    public void deleteFromDatabase(Integer id){
+        mAppDatabase = AppDatabase.getInstance(getApplicationContext());
+        mAppDatabase.FavMoviesDao().deleteMovieByID(id);
+        Toast.makeText(DetailActivity.this,"Deleted From Favourites",Toast.LENGTH_SHORT).show();
+    }
+    public void saveLocalData(final MovieDetails mMovieDetails) {
+
+        mAppDatabase = AppDatabase.getInstance(getApplicationContext());
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -435,7 +517,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
 
     @Override
-    public void OnYoutubeclicked(String youtubeKey) {
+    public void OnYoutubeClicked(String youtubeKey) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + youtubeKey));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + youtubeKey));
