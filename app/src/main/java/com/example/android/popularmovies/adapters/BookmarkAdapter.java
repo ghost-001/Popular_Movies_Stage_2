@@ -47,7 +47,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.AllMov
         holder.movie_poster.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mOnBookmarkClick.OnBookmarkPosterclicked(movie.getMovie_id(), movie.getTitle());
+                mOnBookmarkClick.OnBookmarkPosterClicked(movie.getMovie_id(), movie.getTitle());
             }
         });
 

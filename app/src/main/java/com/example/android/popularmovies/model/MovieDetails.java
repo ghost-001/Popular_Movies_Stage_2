@@ -132,10 +132,7 @@ public class MovieDetails {
     @SerializedName("reviews")
     @Expose
     private Reviews reviews;
-    @Ignore
-    @SerializedName("credits")
-    @Expose
-    private Credits credits;
+
 
 
     @Ignore
@@ -175,26 +172,6 @@ public class MovieDetails {
     }
 
     public Bitmap getImage_poster() {
-
-
-        /*Picasso.get().load(BASE_IMAGE_URL + posterPath)
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        image_poster = bitmap;
-                        Log.d("BITMAP","CONVERTED BITMAP");
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        Log.d("BITMAP","CONVERTED  FAILED BITMAP");
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });*/
 
         return image_poster;
     }
@@ -399,13 +376,6 @@ public class MovieDetails {
         this.reviews = reviews;
     }
 
-    public Credits getCredits() {
-        return credits;
-    }
-
-    public void setCredits(Credits credits) {
-        this.credits = credits;
-    }
 
 }
 

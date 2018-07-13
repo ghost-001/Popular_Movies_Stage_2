@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,7 +50,11 @@ public class BookmarksActivity extends AppCompatActivity implements onBookmarkCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Favourites");
 
-        mLayoutManager = new GridLayoutManager(this, 2);
+        Integer span = 2;
+        if (getResources().getConfiguration().orientation == 2) {
+            span = 4;
+        }
+        mLayoutManager = new GridLayoutManager(this, span);
         mRecyclerView = findViewById(R.id.bookmark_recycle);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -60,7 +63,7 @@ public class BookmarksActivity extends AppCompatActivity implements onBookmarkCl
         viewModel.getMovies().observe(this, new Observer<List<MovieDetails>>() {
             @Override
             public void onChanged(@Nullable List<MovieDetails> movieDetails) {
-                Log.d("TAG", "Updating list of movies from LIVEDATA in ViewModel");
+
                 mBookmarkAdapter = new BookmarkAdapter(movieDetails, mContext);
                 mRecyclerView.setAdapter(mBookmarkAdapter);
             }
@@ -68,8 +71,8 @@ public class BookmarksActivity extends AppCompatActivity implements onBookmarkCl
     }
 
     @Override
-    public void OnBookmarkPosterclicked(Integer movie_id, String movie_name) {
-        
+    public void OnBookmarkPosterClicked(Integer movie_id, String movie_name) {
+
         Intent intent = new Intent(BookmarksActivity.this, BookmarksDetailActivity.class);
         intent.putExtra("movie_id", movie_id);
         intent.putExtra("movie_name", movie_name);

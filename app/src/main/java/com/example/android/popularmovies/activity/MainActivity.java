@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
         if (checkInternet()) {
             getPref();
-            if(category == 1)
+            if (category == 1)
                 navigationView.setCheckedItem(R.id.nav_top_rated);
             else
                 navigationView.setCheckedItem(R.id.nav_popular);
@@ -188,29 +187,6 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
         editor.putInt(getString(R.string.CATEGORY_SELECTED), category);
         editor.apply();
 
-    /*   MainActivityMoviesFactory factory = new MainActivityMoviesFactory(mpage,category);
-        MainActivityMovieListViewModel viewModel
-                = ViewModelProviders.of(this, factory).get(MainActivityMovieListViewModel.class);
-
-
-        viewModel.getMovieListObservable().observe(this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-              // viewModel.getMovieListObservable().removeObserver(this);
-                if(mMoviesAdapter == null) {
-                    mMoviesAdapter = new MoviesAdapter(movies,context);
-                    mRecyclerView.setAdapter(mMoviesAdapter);
-                    mProgressBar.setVisibility(View.GONE);
-                }else{
-                    mProgressBar.setVisibility(View.GONE);
-                    mMoviesAdapter.updateMovieList(movies);
-                    mMoviesAdapter.notifyDataSetChanged();
-
-                }
-            }
-        });*/
-
-
         Call<MovieResponse_first> call;
         if (category == 1) {
             call = retrofit_interface.getTopRatedMovies(API_KEY, mpage);
@@ -279,16 +255,25 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
 
-        if (item.getItemId() == R.id.main_menu_bookmarks) {
 
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+
+        if (itemId == R.id.main_menu_bookmarks) {
             Intent intent = new Intent(this, BookmarksActivity.class);
             startActivity(intent);
             return true;
+
         } else if (checkInternet()) {
             mpage = 1;
             mMoviesAdapter = null;
-            switch (item.getItemId()) {
+            switch (itemId) {
 
                 case R.id.main_menu_top_rated:
                     category = 1;
@@ -306,7 +291,9 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                 default:
                     return super.onOptionsItemSelected(item);
             }
-        } else {
+        } else
+
+        {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.dialog_message)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -318,9 +305,10 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
             builder.show();
             return true;
         }
+
     }
 
-    public void setNavigationDrawer(){
+    public void setNavigationDrawer() {
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -330,7 +318,10 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                         menuItem.setChecked(true);
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
-                        if (menuItem.getItemId() == R.id.nav_favourites) {
+                        if (menuItem.getItemId() == R.id.nav_exit) {
+                            finish();
+                            return true;
+                        } else if (menuItem.getItemId() == R.id.nav_favourites) {
                             Intent intent = new Intent(MainActivity.this, BookmarksActivity.class);
                             startActivity(intent);
                             return true;
@@ -352,9 +343,6 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                                     Toast.makeText(MainActivity.this, "Popular Movies", Toast.LENGTH_SHORT).show();
                                     break;
 
-                                case R.id.nav_exit:
-                                    finish();
-                                    break;
 
                             }
                             return true;
@@ -370,8 +358,6 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                             builder.show();
                             return true;
                         }
-
-
                     }
                 });
     }

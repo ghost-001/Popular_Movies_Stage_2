@@ -1,6 +1,6 @@
 package com.example.android.popularmovies.activity;
 
-import android.arch.lifecycle.LiveData;
+
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.ColorStateList;
@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -50,7 +49,6 @@ public class BookmarksDetailActivity extends AppCompatActivity {
     private AppDatabase mAppDatabase;
     private ProgressBar mProgressBar;
     private RecyclerView mGenreRecyclerView;
-    private LiveData<MovieDetails> mMovieDetails;
     private Toolbar mToolbar;
     private AppBarLayout mAppBarLayout;
     private Boolean checkBookmark = true;
@@ -61,7 +59,7 @@ public class BookmarksDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmarks_detail);
 
-        Log.d("CYCLE", "On Create");
+
         initViews();
         mProgressBar.setVisibility(View.VISIBLE);
         movie_id = getIntent().getIntExtra("movie_id", 0);
@@ -76,7 +74,6 @@ public class BookmarksDetailActivity extends AppCompatActivity {
 
             @Override
             public void onChanged(@Nullable MovieDetails movieDetails) {
-                Log.d("TAG", "Updating list of movies from LIVEDATA in MainViewModel");
                 viewModel.getMovies().removeObserver(this);
                 initViewsWithData(movieDetails);
             }
@@ -140,15 +137,15 @@ public class BookmarksDetailActivity extends AppCompatActivity {
         mActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               if(checkBookmark) {
-                   deleteFromDatabase(movie_id);
-                   checkBookmark = false;
-                   setFab();
-               }else{
-                   saveLocalData(movieDetails);
-                   checkBookmark = true;
-                   setFab();
-               }
+                if (checkBookmark) {
+                    deleteFromDatabase(movie_id);
+                    checkBookmark = false;
+                    setFab();
+                } else {
+                    saveLocalData(movieDetails);
+                    checkBookmark = true;
+                    setFab();
+                }
 
             }
         });
@@ -166,11 +163,13 @@ public class BookmarksDetailActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Added to Favourites", Toast.LENGTH_SHORT).show();
     }
-    public void deleteFromDatabase(Integer id){
+
+    public void deleteFromDatabase(Integer id) {
         mAppDatabase = AppDatabase.getInstance(getApplicationContext());
         mAppDatabase.FavMoviesDao().deleteMovieByID(id);
-        Toast.makeText(BookmarksDetailActivity.this,"Deleted From Favourites",Toast.LENGTH_SHORT).show();
+        Toast.makeText(BookmarksDetailActivity.this, "Deleted From Favourites", Toast.LENGTH_SHORT).show();
     }
+
     public void setFab() {
         if (checkBookmark) {
             //setting white color as background

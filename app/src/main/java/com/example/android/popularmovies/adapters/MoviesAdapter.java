@@ -70,13 +70,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
         return mMovieList.size();
     }
 
-    public void addMovies(List<Movie> movies) {
-        for (Movie m : movies) {
-            mMovieList.add(m);
-        }
-        notifyDataSetChanged();
-    }
-
     public static class AllMovieViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView movie_poster;

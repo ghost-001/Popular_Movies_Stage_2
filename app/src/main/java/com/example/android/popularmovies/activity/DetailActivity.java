@@ -45,7 +45,6 @@ import com.example.android.popularmovies.adapters.ReviewsAdapter;
 import com.example.android.popularmovies.adapters.TrailerAdapter;
 import com.example.android.popularmovies.database.AppDatabase;
 import com.example.android.popularmovies.factory.DetailActivityMovieFactory;
-import com.example.android.popularmovies.model.Credits;
 import com.example.android.popularmovies.model.Genre;
 import com.example.android.popularmovies.model.MovieDetails;
 import com.example.android.popularmovies.model.ReviewResults;
@@ -121,7 +120,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
             builder.create();
             builder.show();
         } else {
-            postponeEnterTransition();
+
             movieId = getIntent().getIntExtra("movie_id", 0);
             movieName = getIntent().getStringExtra("movie_name");
             backdropUrl = getIntent().getStringExtra("backdrop_url");
@@ -157,16 +156,6 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         }
     }
 
-    private void scheduleStartPostponedTransition(final ImageView imageView) {
-        imageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                mPosterImage.getViewTreeObserver().removeOnPreDrawListener(this);
-                startPostponedEnterTransition();
-                return true;
-            }
-        });
-    }
 
     public void initViews() {
 
@@ -311,9 +300,6 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
     public void initViewsWithData(final MovieDetails mMovieDetails) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mAppBarLayout.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.GONE);
-        scheduleStartPostponedTransition(mPosterImage);
 
 
         Picasso.get().load(posterUrl)
@@ -337,6 +323,8 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
 
                     }
                 });
+
+
 
 
         checkIfBookmark();
@@ -392,7 +380,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
         mMovieSynopsis.setVisibility(View.VISIBLE);
         mView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
-        Credits mCast = mMovieDetails.getCredits();
+
         Videos mVideos = mMovieDetails.getVideos();
 
 
@@ -465,6 +453,9 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                 }
             }
         });
+        mAppBarLayout.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+
 
     }
 
