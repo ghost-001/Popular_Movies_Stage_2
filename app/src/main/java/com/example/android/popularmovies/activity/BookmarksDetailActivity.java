@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class BookmarksDetailActivity extends AppCompatActivity {
-    private String TAG = "BOOKMARKDetailActivity";
     private int movie_id;
     private String movie_name;
     private ImageView mPoster_image;
@@ -161,13 +160,13 @@ public class BookmarksDetailActivity extends AppCompatActivity {
             }
         });
 
-        Toast.makeText(this, "Added to Favourites", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.add, Toast.LENGTH_SHORT).show();
     }
 
     public void deleteFromDatabase(Integer id) {
         mAppDatabase = AppDatabase.getInstance(getApplicationContext());
         mAppDatabase.FavMoviesDao().deleteMovieByID(id);
-        Toast.makeText(BookmarksDetailActivity.this, "Deleted From Favourites", Toast.LENGTH_SHORT).show();
+        Toast.makeText(BookmarksDetailActivity.this, R.string.delete_this, Toast.LENGTH_SHORT).show();
     }
 
     public void setFab() {

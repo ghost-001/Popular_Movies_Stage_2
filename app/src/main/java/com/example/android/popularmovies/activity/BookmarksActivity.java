@@ -48,7 +48,7 @@ public class BookmarksActivity extends AppCompatActivity implements onBookmarkCl
         mToolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Favourites");
+        getSupportActionBar().setTitle(getResources().getString(R.string.favourites));
 
         Integer span = 2;
         if (getResources().getConfiguration().orientation == 2) {
@@ -93,7 +93,7 @@ public class BookmarksActivity extends AppCompatActivity implements onBookmarkCl
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.clear_bookmarks) {
-            Toast.makeText(this, "Deleted All Favourites !!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.delete, Toast.LENGTH_SHORT).show();
             mDb.FavMoviesDao().deleteTable();
 
         }

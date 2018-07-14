@@ -135,7 +135,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
                 public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                     if (verticalOffset == -mCollapsingToolbarLayout.getHeight() + mToolbar.getHeight()) {
                         mCollapsingToolbarLayout.setTitle(movieName);
-                        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
                     } else {
                         mCollapsingToolbarLayout.setTitle(" ");
                     }
@@ -299,7 +299,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
     }
 
     public void initViewsWithData(final MovieDetails mMovieDetails) {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         Picasso.get().load(posterUrl)
@@ -481,7 +481,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
     public void deleteFromDatabase(Integer id){
         mAppDatabase = AppDatabase.getInstance(getApplicationContext());
         mAppDatabase.FavMoviesDao().deleteMovieByID(id);
-        Toast.makeText(DetailActivity.this,"Deleted From Favourites",Toast.LENGTH_SHORT).show();
+        Toast.makeText(DetailActivity.this, R.string.delete,Toast.LENGTH_SHORT).show();
     }
     public void saveLocalData(final MovieDetails mMovieDetails) {
 
@@ -493,7 +493,7 @@ public class DetailActivity extends AppCompatActivity implements OnYoutubeClickL
             }
         });
 
-        Toast.makeText(this, "Added to Favourites", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.add, Toast.LENGTH_SHORT).show();
     }
 
     public List<String> getYoutubeKeys(List<VideoResults> results) {

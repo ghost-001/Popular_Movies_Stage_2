@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
@@ -23,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,20 +49,18 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
+    public final  String LIST_STATE_KEY = "recycler_list_state";
+    public final String PAGE_STATE_KEY = "page";
+    Parcelable listState;
     private String API_KEY;
-    private String TAG = "MainActivity";
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
     private ProgressBar mProgressBar;
     private MoviesAdapter mMoviesAdapter;
-    private int mpage = 1;
+    private int mPage;
 
     private MovieService retrofit_interface;
     private List<Movie> mMovies;
-
-    private Boolean isLoading = true;
-    private Integer pastVisibleItem, visibleItemCount, totalItemCount, previousTotal = 0;
-    private int view_threshold = 20;
     private Context context;
     // category = 1 will give top rated movies
     // category = 0  will give popular movies
@@ -72,13 +72,20 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
+    private Button prev, next;
+    private TextView pageTextView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+        if (savedInstanceState != null) {
+            mPage = savedInstanceState.getInt(PAGE_STATE_KEY);
+        } else {
+            mPage = 1;
+        }
+
 
         mConstraintLayout = findViewById(R.id.container_header_lyt);
         mtextRetry = findViewById(R.id.main_retry);
@@ -86,12 +93,21 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
         mProgressBar = findViewById(R.id.main_progress);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        prev = findViewById(R.id.btn_1);
+        next = findViewById(R.id.btn_2);
+        pageTextView = findViewById(R.id.main_page);
         setSupportActionBar(mToolbar);
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         setNavigationDrawer();
         mProgressBar.setVisibility(View.VISIBLE);
+        Integer span = 2;
+        if (getResources().getConfiguration().orientation == 2) {
+            span = 4;
+        }
+        pageTextView.setText(String.valueOf(mPage));
+        mLayoutManager = new GridLayoutManager(this, span);
 
         if (checkInternet()) {
             getPref();
@@ -110,13 +126,42 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
                     Boolean b = checkInternet();
                     if (b) {
+
                         startMovies();
                     }
-                    Toast.makeText(MainActivity.this, "Loading . . .", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.laoding, Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        listState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_KEY, listState);
+        outState.putInt(PAGE_STATE_KEY, mPage);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            listState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+            mPage = savedInstanceState.getInt(PAGE_STATE_KEY);
+
+        }
+    }
+
+    @Override
+
+
+    protected void onResume() {
+        mLayoutManager.onRestoreInstanceState(listState);
+        super.onResume();
+
+    }
+
 
     public Boolean checkInternet() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -141,11 +186,6 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
         API_KEY = getResources().getString(R.string.API_KEY);
         context = this;
 
-        Integer span = 2;
-        if (getResources().getConfiguration().orientation == 2) {
-            span = 4;
-        }
-        mLayoutManager = new GridLayoutManager(this, span);
         mRecyclerView = findViewById(R.id.main_recyclerview);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mMovies = new ArrayList<Movie>();
@@ -155,29 +195,37 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
 
         loadMovies();
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        prev.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                visibleItemCount = mLayoutManager.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                pastVisibleItem = mLayoutManager.findFirstCompletelyVisibleItemPosition();
-                if (isLoading) {
-                    if (totalItemCount > previousTotal) {
-                        isLoading = false;
-                        previousTotal = totalItemCount;
+            public void onClick(View view) {
+                if (checkInternet()) {
+                    if (mPage != 1) {
+                        mPage--;
+                        loadMovies();
+                        pageTextView.setText(String.valueOf(mPage));
+                    } else {
+                        Toast.makeText(MainActivity.this, R.string.start, Toast.LENGTH_SHORT).show();
                     }
-                }
-                if (!isLoading && (totalItemCount - visibleItemCount) <= (pastVisibleItem + view_threshold)) {
-                    ++mpage;
-                    loadMovies();
-                    isLoading = false;
+                } else {
+                    showNoInternet();
+
                 }
             }
-
-
         });
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkInternet()) {
+                    mPage++;
+                    loadMovies();
+                    pageTextView.setText(String.valueOf(mPage));
+                } else {
+                    showNoInternet();
 
+                }
+
+            }
+        });
     }
 
     public void loadMovies() {
@@ -189,9 +237,9 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
         Call<MovieResponse_first> call;
         if (category == 1) {
-            call = retrofit_interface.getTopRatedMovies(API_KEY, mpage);
+            call = retrofit_interface.getTopRatedMovies(API_KEY, mPage);
         } else {
-            call = retrofit_interface.getPopularMovies(API_KEY, mpage);
+            call = retrofit_interface.getPopularMovies(API_KEY, mPage);
         }
 
 
@@ -201,18 +249,11 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
             public void onResponse(Call<MovieResponse_first> call, Response<MovieResponse_first> response) {
                 if (response.isSuccessful()) {
                     List<Movie> mm = response.body().getReults();
-                    if (mMoviesAdapter == null) {
+                    mMoviesAdapter = new MoviesAdapter(mm, MainActivity.this);
+                    mMoviesAdapter.notifyDataSetChanged();
+                    mRecyclerView.setAdapter(mMoviesAdapter);
+                    mProgressBar.setVisibility(View.GONE);
 
-                        mMoviesAdapter = new MoviesAdapter(mm, context);
-                        mRecyclerView.setAdapter(mMoviesAdapter);
-                        mProgressBar.setVisibility(View.GONE);
-                    } else {
-
-                        mProgressBar.setVisibility(View.GONE);
-                        mMoviesAdapter.updateMovieList(mm);
-                        mMoviesAdapter.notifyDataSetChanged();
-
-                    }
 
                 }
 
@@ -220,9 +261,8 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
 
             @Override
             public void onFailure(Call<MovieResponse_first> call, Throwable t) {
-                Log.e(TAG, t.toString());
+                Toast.makeText(MainActivity.this,R.string.failure,Toast.LENGTH_SHORT).show();
             }
-
         });
 
     }
@@ -271,7 +311,8 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
             return true;
 
         } else if (checkInternet()) {
-            mpage = 1;
+            mPage = 1;
+            pageTextView.setText(String.valueOf(mPage));
             mMoviesAdapter = null;
             switch (itemId) {
 
@@ -279,13 +320,13 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                     category = 1;
                     navigationView.setCheckedItem(R.id.nav_top_rated);
                     startMovies();
-                    Toast.makeText(this, "Top Rated Movies", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.top_rated_movies, Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.main_menu_popular:
                     category = 0;
                     navigationView.setCheckedItem(R.id.nav_popular);
                     startMovies();
-                    Toast.makeText(this, "Popular Movies", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.popular_movies, Toast.LENGTH_SHORT).show();
                     return true;
 
                 default:
@@ -326,39 +367,44 @@ public class MainActivity extends AppCompatActivity implements OnPosterListner {
                             startActivity(intent);
                             return true;
                         } else if (checkInternet()) {
-                            mpage = 1;
+                            mPage = 1;
+                            pageTextView.setText(String.valueOf(mPage));
                             mMoviesAdapter = null;
                             switch (menuItem.getItemId()) {
 
                                 case R.id.nav_top_rated:
                                     category = 1;
                                     startMovies();
-                                    Toast.makeText(MainActivity.this, "Top Rated Movies", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, R.string.top_rated_movies, Toast.LENGTH_SHORT).show();
 
                                     break;
                                 case R.id.nav_popular:
                                     category = 0;
 
                                     startMovies();
-                                    Toast.makeText(MainActivity.this, "Popular Movies", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, R.string.popular_movies, Toast.LENGTH_SHORT).show();
                                     break;
 
 
                             }
                             return true;
                         } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setMessage(R.string.dialog_message)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-
-                                        }
-                                    });
-                            builder.create();
-                            builder.show();
+                            showNoInternet();
                             return true;
                         }
                     }
                 });
+    }
+
+    public void showNoInternet() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage(R.string.dialog_message)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        builder.create();
+        builder.show();
     }
 }

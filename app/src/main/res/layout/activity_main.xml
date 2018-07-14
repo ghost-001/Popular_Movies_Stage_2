@@ -5,59 +5,106 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".activity.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/main_app_bar_layout"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/black"
-            android:elevation="4dp" />
-    </android.support.design.widget.AppBarLayout>
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/main_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/main_app_bar_layout">
-
-    </android.support.v7.widget.RecyclerView>
-
-    <ProgressBar
-        android:id="@+id/main_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
-
-    <include
-        android:id="@+id/container_header_lyt"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        layout="@layout/no_internet"
-        />
+        android:background="@android:color/black"
+        tools:context=".activity.MainActivity">
 
-</RelativeLayout>
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/main_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/black"
+                android:elevation="4dp" />
+        </android.support.design.widget.AppBarLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/main_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_relative"
+            android:layout_below="@id/main_app_bar_layout">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <View
+            android:id="@+id/veiw_1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/main_recyclerview"
+            android:background="@android:color/white"
+            android:visibility="visible"/>
+        <RelativeLayout
+            android:id="@+id/btn_relative"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/btn_1"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
+                android:padding="30dp"
+
+                />
+
+            <TextView
+                android:id="@+id/main_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="@android:color/white"/>
+            <Button
+                android:id="@+id/btn_2"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="35dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:padding="30dp"
+                />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/main_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/container_header_lyt"
+            layout="@layout/no_internet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/navigation_menu"
         android:elevation="6dp"
-        app:headerLayout="@layout/navigation_header_layout"/>
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/navigation_header_layout"
+        app:menu="@menu/navigation_menu" />
 </android.support.v4.widget.DrawerLayout>

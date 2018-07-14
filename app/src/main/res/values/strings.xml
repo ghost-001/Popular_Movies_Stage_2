@@ -25,6 +25,14 @@
     <string name="popular_movies">Popular Movies</string>
     <string name="exit">Exit</string>
     <string name="trailers">Trailers</string>
+    <string name="LIST_STATE_KEY">recycler_list_state</string>
+    <string name="PAGE_STATE_KEY">page</string>
+    <string name="laoding">Loading . . .</string>
+    <string name="start">You are at the start</string>
+    <string name="failure">Unable to load !!</string>
+  <string name="delete">Deleted All Favourites !!</string>
+    <string name="add">Added to Favourites</string>
+    <string name="delete_this">Deleted from Favourites</string>
 
 
 </resources>

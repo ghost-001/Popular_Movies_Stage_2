@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.model.Movie;
 import com.example.android.popularmovies.utility.OnPosterListner;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieViewHolder> {
@@ -26,7 +28,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
     private String BASE_BACKDROP_URL = "https://image.tmdb.org/t/p/w500";
 
 
-    public MoviesAdapter(List<Movie> movie, Context context) {
+    public MoviesAdapter(List<Movie> movie,Context context) {
         mContext = context;
         this.mMovieList = movie;
         mOnPosterListner = (OnPosterListner) context;
@@ -36,7 +38,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
 
         mMovieList.addAll(newlist);
     }
-
+  public void setData(List<Movie> newList){
+        mMovieList = newList;
+  }
     @NonNull
     @Override
     public MoviesAdapter.AllMovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,7 +51,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
 
     @Override
     public void onBindViewHolder(@NonNull final MoviesAdapter.AllMovieViewHolder holder, int position) {
-        Log.d("Main", "BIND");
+        Log.d("Loaders", mMovieList.get(position).getTitle());
         final Movie movie = mMovieList.get(position);
         final String image_url = BASE_IMAGE_URL + movie.getPoster_path();
         final String backdrop_url = BASE_BACKDROP_URL + movie.getBackdrop_path();
@@ -72,7 +76,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
 
     public static class AllMovieViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView movie_poster;
+        ImageView movie_poster;
         TextView movie_name;
         Context cc;
 
@@ -84,6 +88,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.AllMovieVi
             movie_name = (TextView) itemView.findViewById(R.id.movie_name);
 
         }
+
 
         public void setImage(String url) {
 
