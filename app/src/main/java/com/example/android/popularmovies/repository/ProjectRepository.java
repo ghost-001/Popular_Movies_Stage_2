@@ -48,32 +48,6 @@ public class ProjectRepository {
         return projectRepository;
     }
 
-    public LiveData<List<Movie>> getAllMoviesList(int page, int category) {
-
-        Call<MovieResponse_first> call;
-
-        Log.d("TAG", "RESPONSE DONE page" + page);
-        Log.d("TAG", "RESPONSE DONE category" + category);
-        if (category == 1) {
-            call = retrofit_interface.getTopRatedMovies(API_KEY, page);
-        } else {
-            call = retrofit_interface.getPopularMovies(API_KEY, page);
-        }
-        call.enqueue(new Callback<MovieResponse_first>() {
-            @Override
-            public void onResponse(Call<MovieResponse_first> call, Response<MovieResponse_first> response) {
-                movie.setValue(response.body().getReults());
-                Log.d("TAG", "RESPONSE DONE");
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse_first> call, Throwable t) {
-
-            }
-        });
-        Log.d("TAG", "RESPONSE DONE end");
-        return movie;
-    }
 
     public LiveData<List<MovieDetails>> getAllMoviesFromDatabase(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
